@@ -1,11 +1,13 @@
 import { StatusBar } from 'expo-status-bar';
-import { Appbar, BottomNavigation, Button, Text } from 'react-native-paper';
+import { Appbar, BottomNavigation, Button, Text, TouchableRipple } from 'react-native-paper';
 import { ScrollView, StyleSheet, View } from 'react-native';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 
 import Home from './Home'
 import More from './More'
+import { AppContext, AppContextProvider } from '../AppContext'
 
+import { io } from 'socket.io-client';
 
 export default function App(props) {
 	const [index, setIndex] = useState(0);
@@ -19,10 +21,29 @@ export default function App(props) {
 		more: More,
 	})
 
-    return (<>
+
+	const [loading, setLoading] = useState('loading')
+    const appContext = useContext(AppContext)
+
+	let socket
+
+    const connectSocketIO = () => {
+        console.log("Connecting...")
+        socket = io(":4000")
+        socket.on('connect', () => setLoading('connected'))
+        socket.on('reconnect_failed', () => setLoading('fail'))
+        console.log("Connected.")
+    }
+
+	if (loading == 'loading') connectSocketIO()
+
+	return (<AppContextProvider>
 		<Appbar dark={true}>
 			<Appbar.Action icon="chess-queen" />
 			<Appbar.Content title="Chess App" />
+			<Button type="text" icon={{connected: "check", fail: "warning", false: "power-plug"}[loading]} loading={loading == 'loading'} disabled={['loading', 'connected'].includes(loading)} onPress={() => { setLoading('loading'); connectSocketIO() }}>
+				{{fail: "Failed to Connect. Tap to retry", false: "Connect Socket", loading: "Connecting...", connected: "Connected!"}[loading]}
+			</Button>
 			<Appbar.Action icon="brightness-6" onPress={props.changeTheme} />
 		</Appbar>
 		<BottomNavigation
@@ -30,7 +51,7 @@ export default function App(props) {
 			onIndexChange={setIndex}
 			renderScene={renderScene}
 		/>		
-	</>
+	</AppContextProvider>
 	);
 	<ScrollView
 		style={{backgroundColor: 'black', flex: 1, padding: 32,}}

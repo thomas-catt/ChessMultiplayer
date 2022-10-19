@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { AppRegistry } from 'react-native';
 import { MD3LightTheme, MD3DarkTheme, Provider as PaperProvider } from 'react-native-paper';
 import { expo } from './app.json';
-// const { Button } = require("./assets/components/Widgets")
 import App from './assets/views/App'
+import { AppContext, AppContextProvider } from './assets/AppContext'
 
 const materialLightTheme = {
 	...MD3LightTheme,
@@ -22,14 +22,27 @@ const materialDarkTheme = {
 	}
 }
 
-export default function Main() {
-	const [darkTheme, setDarkTheme] = useState(true)
+function AppComponent() {
+	const appContext = useContext(AppContext)
+	const { darkTheme, setDarkTheme } = appContext
+	const [ paperDarkTheme, setPaperDarkTheme ] = useState(darkTheme)
+
+	function onThemeToggle() {
+		setDarkTheme(!darkTheme)
+		setPaperDarkTheme(!paperDarkTheme)
+	}
 	
 	let theme = darkTheme ? materialDarkTheme : materialLightTheme
+	return <PaperProvider theme={theme}>
+		<App theme={theme} darkTheme={darkTheme} changeTheme={onThemeToggle}/>
+	</PaperProvider>			
+}
+
+export default function Main() {
 	return (
-		<PaperProvider theme={theme}>
-			<App theme={theme} darkTheme={darkTheme} changeTheme={() => setDarkTheme(!darkTheme)}/>
-		</PaperProvider>			
+		<AppContextProvider>
+			<AppComponent/>
+		</AppContextProvider>
 	)
 }
 
