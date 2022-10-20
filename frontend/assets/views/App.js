@@ -5,7 +5,6 @@ import { useContext, useState } from 'react';
 
 import Home from './Home'
 import More from './More'
-import { AppContext, AppContextProvider } from '../AppContext'
 
 import { io } from 'socket.io-client';
 
@@ -23,7 +22,6 @@ export default function App(props) {
 
 
 	const [loading, setLoading] = useState('loading')
-    const appContext = useContext(AppContext)
 
 	let socket
 

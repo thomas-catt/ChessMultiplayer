@@ -3,7 +3,7 @@ import { AppRegistry } from 'react-native';
 import { MD3LightTheme, MD3DarkTheme, Provider as PaperProvider } from 'react-native-paper';
 import { expo } from './app.json';
 import App from './assets/views/App'
-import { AppContext, AppContextProvider } from './assets/AppContext'
+// import { AppContext, AppContextProvider } from './assets/AppContext'
 
 const materialLightTheme = {
 	...MD3LightTheme,
@@ -22,7 +22,9 @@ const materialDarkTheme = {
 	}
 }
 
-function AppComponent() {
+App = () => <Text>Hello World</Text>
+
+export default function Main() {
 	const appContext = useContext(AppContext)
 	const { darkTheme, setDarkTheme } = appContext
 	const [ paperDarkTheme, setPaperDarkTheme ] = useState(darkTheme)
@@ -33,15 +35,11 @@ function AppComponent() {
 	}
 	
 	let theme = darkTheme ? materialDarkTheme : materialLightTheme
-	return <PaperProvider theme={theme}>
-		<App theme={theme} darkTheme={darkTheme} changeTheme={onThemeToggle}/>
-	</PaperProvider>			
-}
-
-export default function Main() {
 	return (
 		<AppContextProvider>
-			<AppComponent/>
+			<PaperProvider theme={theme}>
+				<App theme={theme} darkTheme={darkTheme} changeTheme={onThemeToggle}/>
+			</PaperProvider>
 		</AppContextProvider>
 	)
 }

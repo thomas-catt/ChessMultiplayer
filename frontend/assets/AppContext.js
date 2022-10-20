@@ -6,14 +6,14 @@ function AppContextProvider(props) {
     const [stuff, setStuff] = useState('foo');
 	const [darkTheme, setDarkTheme] = useState(true)
 
-    return <AppContextProvider value={{
+    return <AppContext.Provider value={{
         stuff,
         setStuff,
         darkTheme,
         setDarkTheme,
     }}>
         {props.children}
-    </AppContextProvider>
+    </AppContext.Provider>
 }
 
 export {
