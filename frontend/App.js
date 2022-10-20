@@ -1,30 +1,11 @@
 import { useContext, useState } from 'react';
 import { AppRegistry } from 'react-native';
-import { MD3LightTheme, MD3DarkTheme, Provider as PaperProvider } from 'react-native-paper';
 import { expo } from './app.json';
 import App from './assets/views/App'
-// import { AppContext, AppContextProvider } from './assets/AppContext'
+import { AppContext, AppContextProvider } from './assets/scripts/AppContext'
+import { Provider as PaperProvider } from 'react-native-paper';
 
-const materialLightTheme = {
-	...MD3LightTheme,
-	mode: "adaptive",
-	colors: {
-		...MD3LightTheme.colors,
-	}
-}
-
-
-const materialDarkTheme = {
-	...MD3DarkTheme,
-	mode: "adaptive",
-	colors: {
-		...MD3DarkTheme.colors,
-	}
-}
-
-App = () => <Text>Hello World</Text>
-
-export default function Main() {
+function AppContainer() {
 	const appContext = useContext(AppContext)
 	const { darkTheme, setDarkTheme } = appContext
 	const [ paperDarkTheme, setPaperDarkTheme ] = useState(darkTheme)
@@ -34,12 +15,16 @@ export default function Main() {
 		setPaperDarkTheme(!paperDarkTheme)
 	}
 	
-	let theme = darkTheme ? materialDarkTheme : materialLightTheme
+	let theme = appContext.themes.current()
+	return <PaperProvider theme={theme}>
+		<App theme={theme} darkTheme={darkTheme} changeTheme={onThemeToggle}/>
+	</PaperProvider>
+}
+
+export default function Main() {
 	return (
 		<AppContextProvider>
-			<PaperProvider theme={theme}>
-				<App theme={theme} darkTheme={darkTheme} changeTheme={onThemeToggle}/>
-			</PaperProvider>
+			<AppContainer />
 		</AppContextProvider>
 	)
 }

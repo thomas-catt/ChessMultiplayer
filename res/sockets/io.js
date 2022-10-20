@@ -1,6 +1,7 @@
 require('dotenv').config()
 const ioPort = process.env.WS_PORT || 80
 const { socketLog } = require('../commons')
+const { UserConnected } = require('./Users')
 
 init = (server) => {
     const { Server } = require("socket.io")
@@ -12,8 +13,7 @@ init = (server) => {
     })
 
     io.on('connection', (socket) => {
-        socketLog(`"${socket.handshake.headers['user-agent']}"`.green.bold, " connected".green)
-        socket.on('disconnect', (socket) => socketLog("a user disconnected.".yellow))
+        UserConnected(socket, io)
     })
 
     io.listen(ioPort)
