@@ -2,13 +2,15 @@ import { useState, createContext } from 'react';
 import { MD3LightTheme, MD3DarkTheme } from 'react-native-paper';
 import 'react-native-get-random-values'
 import { v4 as uuidv4 } from 'uuid'
+import { Platform } from 'react-native';
 
 const AppContext = createContext()
 
 function AppContextProvider(props) {
     const [Socket, setSocket] = useState();
     const [usersCount, setUsersCount] = useState(-1);
-    const clientName = "Client " + uuidv4().split("-")[0].toUpperCase()
+    const clientId = uuidv4().split("-")[0].toUpperCase()
+    const clientName = Platform.select({android: "AndroidClient", ios: "iOSClient", default: "WebClient"}) + " " + clientId
 	const [darkTheme, setDarkTheme] = useState(true)
     const themes = {
         // Set status bar color in these themes
@@ -34,6 +36,7 @@ function AppContextProvider(props) {
         setSocket,
         usersCount,
         setUsersCount,
+        clientId,
         clientName,
         darkTheme,
         setDarkTheme,

@@ -3,6 +3,7 @@ import { Appbar, BottomNavigation, Button, Text, TouchableRipple } from 'react-n
 import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 import { useContext, useEffect, useState } from 'react';
 import Home from '../views/Home'
+import Messaging from '../views/Messaging'
 import More from '../views/More'
 
 import { AppContext, AppContextProvider } from '../scripts/AppContext'
@@ -12,11 +13,13 @@ export default function App(props) {
 	const [index, setIndex] = useState(0);
 	const [routes] = useState([
 	  { key: 'home', title: 'Home', focusedIcon: 'home', unfocusedIcon: 'home-outline'},
+	  { key: 'messaging', title: 'Messaging', focusedIcon: 'forum', unfocusedIcon: 'forum-outline'},
 	  { key: 'more', title: 'Settings', focusedIcon: 'cog', unfocusedIcon: 'cog-outline' },
 	]);
 
 	const renderScene = BottomNavigation.SceneMap({
 		home: Home,
+		messaging: Messaging,
 		more: More,
 	})
 
