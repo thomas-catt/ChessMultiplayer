@@ -2,12 +2,11 @@ import { Button, Text, TextInput } from 'react-native-paper';
 import { StyleSheet, View } from 'react-native';
 import { Icon } from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useContext, useEffect, useState } from 'react';
-import { AppContext, AppContextProvider } from '../scripts/AppContext'
 import { connectSocketIO, onUsersCountReceive } from '../scripts/Socket'
 
-export default function Home() {
+export default function Home(props) {
+	const { appContext } = props.context
     
-	const appContext = useContext(AppContext)
 	onUsersCountReceive((newUsersCount) => {
 		appContext.setUsersCount(newUsersCount)
 	})

@@ -2,6 +2,7 @@ import { io } from 'socket.io-client';
 const socketUrl = "http://192.168.1.69:4000/"
 
 let socket = false
+let currentCallbacks = []
 const connectSocketIO = ({ onConnect, introduction, onFailure, onDisconnect }) => {
 	if (!socket) {
         socket = io(socketUrl)
@@ -15,15 +16,21 @@ const connectSocketIO = ({ onConnect, introduction, onFailure, onDisconnect }) =
 }
 
 const onUsersCountReceive = (callback) => {
-	socket.on('connected-users', callback)
+	if (currentCallbacks.includes('connected-users')) return
+    
+    socket.on('connected-users', callback)
+    currentCallbacks.push('connected-users')
 }
 
 const broadcastTextMessage = (textMessage) => {
-    console.log("SENDING MESSAGE:", textMessage)
+    socket.emit('text-message', textMessage)
 }
 
 const onTextMessageReceive = (callback) => {
-	socket.on('text-message', callback)
+	if (currentCallbacks.includes('text-message')) return
+    
+    socket.on('text-message', callback)
+    currentCallbacks.push('text-message')
 }
 
 

@@ -6,10 +6,16 @@ import Home from '../views/Home'
 import Messaging from '../views/Messaging'
 import More from '../views/More'
 
-import { AppContext, AppContextProvider } from '../scripts/AppContext'
 import { connectSocketIO } from '../scripts/Socket'
 
+
 export default function App(props) {
+	const { appContext, AppContextProvider } = props.context
+
+	const HomeContainer = () => <Home context={props.context} />
+	const MessagingContainer = () => <Messaging context={props.context} />
+	const MoreContainer = () => <More context={props.context} />
+	
 	const [index, setIndex] = useState(0);
 	const [routes] = useState([
 	  { key: 'home', title: 'Home', focusedIcon: 'home', unfocusedIcon: 'home-outline'},
@@ -18,13 +24,12 @@ export default function App(props) {
 	]);
 
 	const renderScene = BottomNavigation.SceneMap({
-		home: Home,
-		messaging: Messaging,
-		more: More,
+		home: HomeContainer,
+		messaging: MessagingContainer,
+		more: MoreContainer,
 	})
 
 
-	const appContext = useContext(AppContext)
 	const [loading, setLoading] = useState('ready')
 
 	let socket

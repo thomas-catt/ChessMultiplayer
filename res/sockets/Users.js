@@ -3,9 +3,6 @@ const { socketLog } = require("../commons")
 let connectedUsers = []
 let usersCount
 
-setTimeout(() => {
-    
-}, 1000);
 
 // On: CONNECTION
 const UserConnected = (socket, io) => {

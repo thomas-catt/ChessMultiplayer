@@ -11,6 +11,7 @@ function AppContextProvider(props) {
     const [usersCount, setUsersCount] = useState(-1);
     const clientId = uuidv4().split("-")[0].toUpperCase()
     const clientName = Platform.select({android: "AndroidClient", ios: "iOSClient", default: "WebClient"}) + " " + clientId
+    const [messagesList, setMessagesList] = useState([{id: 'a', message: "hello lol"}])
 	const [darkTheme, setDarkTheme] = useState(true)
     const themes = {
         // Set status bar color in these themes
@@ -38,6 +39,8 @@ function AppContextProvider(props) {
         setUsersCount,
         clientId,
         clientName,
+        messagesList,
+        setMessagesList,
         darkTheme,
         setDarkTheme,
         themes

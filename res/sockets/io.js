@@ -2,6 +2,7 @@ require('dotenv').config()
 const ioPort = process.env.WS_PORT || 80
 const { socketLog } = require('../commons')
 const { UserConnected } = require('./Users')
+const { MessageReceived } = require('./Messaging')
 
 init = (server) => {
     const { Server } = require("socket.io")
@@ -14,6 +15,7 @@ init = (server) => {
 
     io.on('connection', (socket) => {
         UserConnected(socket, io)
+        MessageReceived(socket, io)
     })
 
     io.listen(ioPort)
