@@ -6,13 +6,10 @@ import { connectSocketIO, onUsersCountReceive } from '../scripts/Socket'
 
 export default function Home(props) {
 	const { appContext } = props.context
-    
-	onUsersCountReceive((newUsersCount) => {
-		appContext.setUsersCount(newUsersCount)
-	})
 
     return <View style={{padding: 32, display: "flex", justifyContent: "center", alignItems: "center"}}>
         <Text variant='displaySmall'>Hello World</Text>
-        <Text style={{textAlign: "center"}}>You are <Text style={{fontWeight: "bold"}}>{appContext.clientName}</Text>. {appContext.usersCount > -1 ? appContext.usersCount + " users online." : "Please wait while the app connects to the server..."}</Text>
+        <Text style={{textAlign: "center"}}>You are <Text style={{fontWeight: "bold"}}>{appContext.clientName}</Text>.</Text>
+        {/* {appContext.usersCount > -1 ? appContext.usersCount + " users online." : "Please wait while the app connects to the server..."}</Text> */}
     </View>
 }

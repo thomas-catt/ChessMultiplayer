@@ -1,12 +1,12 @@
 import { StatusBar } from 'expo-status-bar';
-import { Appbar, BottomNavigation, Button, Text, TouchableRipple } from 'react-native-paper';
+import { Appbar, BottomNavigation, Button, ProgressBar, Text, TouchableRipple } from 'react-native-paper';
 import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 import { useContext, useEffect, useState } from 'react';
 import Home from '../views/Home'
 import Messaging from '../views/Messaging'
 import More from '../views/More'
 
-import { connectSocketIO } from '../scripts/Socket'
+import { connectSocketIO, onUsersCountReceive } from '../scripts/Socket'
 
 
 export default function App(props) {
@@ -43,6 +43,10 @@ export default function App(props) {
 		onFailure: () => setLoading('fail'),
 		onDisconnect: () => setLoading('false')
 	})
+	    
+	onUsersCountReceive((newUsersCount) => {
+		appContext.setUsersCount(newUsersCount)
+	})
 
 	return (
 			<AppContextProvider>
@@ -50,11 +54,23 @@ export default function App(props) {
 				<Appbar.Header style={{marginTop: StatusBar.currentHeight}} dark={true}>
 					<Appbar.Action icon="chess-queen" />
 					<Appbar.Content title="ChessBoard" />
-					<Button type="text" icon={{connected: "check", fail: "warning", false: "power-plug"}[loading]} loading={loading == 'loading'} disabled={['loading', 'connected'].includes(loading)} onPress={() => { setLoading('ready'); }}>
+					{/* <Button type="text" icon={{connected: "check", fail: "warning", false: "power-plug"}[loading]} loading={loading == 'loading'} disabled={['loading', 'connected'].includes(loading)} onPress={() => { setLoading('ready'); }}>
 						{{fail: "Failed to Connect. Tap to retry", false: "Disconnected. Tap to connect", loading: "Connecting...", connected: "Connected!"}[loading]}
-					</Button>
+					</Button> */}
+					{
+						{
+							loading:<Button disabled={true}>Connecting...</Button>,
+							connected:<><Button textColor={appContext.darkTheme ? "#80e27e" : "#087f23"} icon="account">{appContext.usersCount}</Button></>,
+							fail:<>eror</>,
+							false:<>not Connecting</>,
+						}[loading]
+					}
+
 					<Appbar.Action icon="brightness-6" onPress={props.changeTheme} />
 				</Appbar.Header>
+				{
+					loading == "loading" ? <ProgressBar indeterminate={true} style={{backgroundColor: appContext.themes.current().colors.background}} /> : <></>
+				}
 				<BottomNavigation
 					navigationState={{ index, routes }}
 					onIndexChange={setIndex}

@@ -9,7 +9,7 @@ const clientId = uuidv4().split("-")[0].toUpperCase().substring(4)
 
 function AppContextProvider(props) {
     const [Socket, setSocket] = useState();
-    const [usersCount, setUsersCount] = useState(-1);
+    const [usersCount, setUsersCount] = useState("Waiting...");
     const clientName = Platform.select({android: "AndroidClient", ios: "iOSClient", default: "WebClient"}) + " " + clientId
     let messagesList = []
 	const [darkTheme, setDarkTheme] = useState(true)

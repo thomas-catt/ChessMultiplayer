@@ -13,9 +13,10 @@ function MessagesListView(props) {
     onTextMessageReceive((m) => {
         if ((m.userId === appContext.clientId)) {
             appContext.messagesList = appContext.messagesList.map(a => a.id === m.id ? {...a, sent: true, own: true} : {...a})
+            console.log("Confirmed own message:", m.message)
         } else {
             const newMsg = {...m, sent: true, own: m.userId === appContext.clientId}
-            appContext.messagesList =  [newMsg, ...appContext.messagesList]
+            appContext.messagesList = [newMsg, ...appContext.messagesList]
         }
 
         setMessagesList(appContext.messagesList)
@@ -73,8 +74,8 @@ export default function Messaging(props) {
         setTextMessage("")
         preparedMessage.sent = false
         preparedMessage.own = true
-        appContext.messagesList = [preparedMessage, ...appContext.messagesList]
         setMessagesList(appContext.messagesList)
+        appContext.messagesList = [preparedMessage, ...appContext.messagesList]
         broadcastTextMessage({...preparedMessage, sent: undefined, own: undefined})
     }
 
