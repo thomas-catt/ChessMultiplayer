@@ -5,13 +5,13 @@ import { v4 as uuidv4 } from 'uuid'
 import { Platform } from 'react-native';
 
 const AppContext = createContext()
+const clientId = uuidv4().split("-")[0].toUpperCase().substring(4)
 
 function AppContextProvider(props) {
     const [Socket, setSocket] = useState();
     const [usersCount, setUsersCount] = useState(-1);
-    const clientId = uuidv4().split("-")[0].toUpperCase()
     const clientName = Platform.select({android: "AndroidClient", ios: "iOSClient", default: "WebClient"}) + " " + clientId
-    const [messagesList, setMessagesList] = useState([{id: 'a', message: "hello lol"}])
+    let messagesList = []
 	const [darkTheme, setDarkTheme] = useState(true)
     const themes = {
         // Set status bar color in these themes
@@ -40,7 +40,6 @@ function AppContextProvider(props) {
         clientId,
         clientName,
         messagesList,
-        setMessagesList,
         darkTheme,
         setDarkTheme,
         themes
