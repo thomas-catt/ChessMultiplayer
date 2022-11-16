@@ -1,5 +1,5 @@
 import { io } from 'socket.io-client';
-const socketUrl = "http://192.168.1.69:4000/"
+const socketUrl = "http://192.168.1.4:4000/"
 
 let socket = false
 let currentCallbacks = []

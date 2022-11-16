@@ -53,7 +53,16 @@ export default function App(props) {
 				<SafeAreaView/>
 				<Appbar.Header style={{marginTop: StatusBar.currentHeight}} dark={true}>
 					<Appbar.Action icon="chess-queen" />
-					<Appbar.Content title="ChessBoard" />
+					<View>
+						<View style={{display: 'flex', flexDirection: "column"}}>
+							<Text variant='titleLarge'>ChessMultiplayer</Text>
+							<View style={{flexDirection: "row"}}>
+								<Text style={{color: "#88888888"}}>Authenticated as </Text>
+								<Text>{appContext.clientName}</Text>
+							</View>
+						</View>
+					</View>
+					<Appbar.Content />
 					{/* <Button type="text" icon={{connected: "check", fail: "warning", false: "power-plug"}[loading]} loading={loading == 'loading'} disabled={['loading', 'connected'].includes(loading)} onPress={() => { setLoading('ready'); }}>
 						{{fail: "Failed to Connect. Tap to retry", false: "Disconnected. Tap to connect", loading: "Connecting...", connected: "Connected!"}[loading]}
 					</Button> */}
