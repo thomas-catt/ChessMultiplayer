@@ -58,20 +58,17 @@ export default function App(props) {
 							<Text variant='titleLarge'>ChessMultiplayer</Text>
 							<View style={{flexDirection: "row"}}>
 								<Text style={{color: "#88888888"}}>Authenticated as </Text>
-								<Text>{appContext.clientName}</Text>
+								<Text>{appContext.clientName}.</Text>
 							</View>
 						</View>
 					</View>
 					<Appbar.Content />
-					{/* <Button type="text" icon={{connected: "check", fail: "warning", false: "power-plug"}[loading]} loading={loading == 'loading'} disabled={['loading', 'connected'].includes(loading)} onPress={() => { setLoading('ready'); }}>
-						{{fail: "Failed to Connect. Tap to retry", false: "Disconnected. Tap to connect", loading: "Connecting...", connected: "Connected!"}[loading]}
-					</Button> */}
 					{
 						{
-							loading:<Button disabled={true}>Connecting...</Button>,
+							loading:<Button>Connecting...</Button>,
 							connected:<><Button textColor={appContext.darkTheme ? "#80e27e" : "#087f23"} icon="account">{appContext.usersCount}</Button></>,
 							fail:<>eror</>,
-							false:<>not Connecting</>,
+							false:<>Failed to connect, server offline.</>,
 						}[loading]
 					}
 
@@ -88,27 +85,3 @@ export default function App(props) {
 			</AppContextProvider>
 	);
 }
-
-/*
-module.exports = function () {
-	return (
-		<View style={styles.app}>
-			<View style={styles.container}>
-				<Text>Hello World!</Text>
-				<Button text="Connect WS" />
-			</View>
-			<StatusBar style="auto" />
-		</View>
-	);
-}
-
-const styles = StyleSheet.create({
-	app: {
-		backgroundColor: 'black',
-		color: 'white',
-		flex: 1,
-		alignItems: 'flex-start',
-		justifyContent: 'center',
-	},
-});
-*/

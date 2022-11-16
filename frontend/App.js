@@ -17,7 +17,7 @@ function AppContainer() {
 	
 	let theme = appContext.themes.current()
 	return <PaperProvider theme={theme}>
-		<App context={{appContext, AppContextProvider}} theme={theme} darkTheme={darkTheme} changeTheme={onThemeToggle}/>
+		<App context={{appContext, AppContextProvider}} darkTheme={darkTheme} changeTheme={onThemeToggle}/>
 	</PaperProvider>
 }
 
