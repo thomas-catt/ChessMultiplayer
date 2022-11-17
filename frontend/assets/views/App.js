@@ -48,6 +48,8 @@ export default function App(props) {
 		appContext.setUsersCount(newUsersCount)
 	})
 
+    const theme = appContext.themes.current()
+
 	return (
 			<AppContextProvider>
 				<SafeAreaView/>
@@ -55,10 +57,10 @@ export default function App(props) {
 					<Appbar.Action icon="chess-queen" />
 					<View>
 						<View style={{display: 'flex', flexDirection: "column"}}>
-							<Text variant='titleLarge'>ChessMultiplayer</Text>
+							<Text variant='titleMedium'>ChessMultiplayer</Text>
 							<View style={{flexDirection: "row"}}>
-								<Text style={{color: "#88888888"}}>Authenticated as </Text>
-								<Text>{appContext.clientName}.</Text>
+								<Text style={{color: "#88888888", fontSize: 12}}>Authenticated as </Text>
+								<Text style={{fontSize: 12}}>{appContext.clientName}.</Text>
 							</View>
 						</View>
 					</View>
@@ -68,7 +70,7 @@ export default function App(props) {
 							loading:<Button>Connecting...</Button>,
 							connected:<><Button textColor={appContext.darkTheme ? "#80e27e" : "#087f23"} icon="account">{appContext.usersCount}</Button></>,
 							fail:<>eror</>,
-							false:<>Failed to connect, server offline.</>,
+							false:<Button textColor={theme.colors.error}>Failed to connect, server offline.</Button>,
 						}[loading]
 					}
 
