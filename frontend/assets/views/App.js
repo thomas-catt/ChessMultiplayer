@@ -67,7 +67,7 @@ export default function App(props) {
 					<Appbar.Content />
 					{
 						{
-							loading:<Button>Connecting...</Button>,
+							loading:<Button></Button>,
 							connected:<><Button textColor={appContext.darkTheme ? "#80e27e" : "#087f23"} icon="account">{appContext.usersCount}</Button></>,
 							fail:<>eror</>,
 							false:<Button textColor={theme.colors.error}>Failed to connect, server offline.</Button>,

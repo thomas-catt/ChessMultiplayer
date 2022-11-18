@@ -18,18 +18,19 @@ export default function ChessPiece(props) {
             }}
             style={{
                 position: "absolute",
-                top: props.position[1]*(5/10),
-                left: props.position[0]*(5/10),
+                top: props.position[1],
+                left: props.position[0],
                 zIndex: props.z,
             }}
         >
         <Avatar.Icon
-            size={(windowDimensions.height+windowDimensions.width)/20}
+            size={props.size}
             icon={"chess-"+props.name}
             color={{white: "#ffffff", black: "#000000"}[props.side]}
             style={{
                 backgroundColor: props.pressed ? "#88888833" : "#00000000",
                 borderWidth: 1,
+                borderRadius: 0,
                 borderColor: props.pressed ? "#88888866" : "#00000000",
             }}
         />
