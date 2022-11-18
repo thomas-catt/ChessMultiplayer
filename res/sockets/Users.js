@@ -1,4 +1,5 @@
 const { socketLog } = require("../commons")
+const { EmitBoardLayout } = require('./Chessboard')
 
 let connectedUsers = []
 let usersCount
@@ -7,22 +8,21 @@ let usersCount
 // On: CONNECTION
 const UserConnected = (socket, io) => {
     socket.on('introduction', (clientName) => {
-        socketLog(`"${clientName}"`.green.bold, " connected".green)
-        EmitConnectedUsers(io)
+        EmitConnectedUsers(io, true, "\"" + clientName + "\"")
+        EmitBoardLayout(io)
     })
     socket.on('disconnect', () => {
-        socketLog("a user disconnected.".yellow)
-        EmitConnectedUsers(io)
+        EmitConnectedUsers(io, false, "disconnected")
     })
 
 }
 
 // Emit: CONNECTED USERS
 
-const EmitConnectedUsers = (io) => {
+const EmitConnectedUsers = (io, connect, lastConnected) => {
     usersCount = io.engine.clientsCount
     io.sockets.emit('connected-users', usersCount)
-    socketLog("Connected Users: ", usersCount)
+    socketLog("Connected Users: ", usersCount, `(${connect ? "+" : ""}${lastConnected})`[connect ? "green" : "red"].bold)
 }
 
 module.exports = {

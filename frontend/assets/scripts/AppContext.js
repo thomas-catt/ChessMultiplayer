@@ -12,6 +12,7 @@ function AppContextProvider(props) {
     const [usersCount, setUsersCount] = useState("Waiting...");
     const clientName = Platform.select({android: "AndroidClient", ios: "iOSClient", default: "WebClient"}) + " " + clientId
     let messagesList = []
+    const [piecesLocations, setPiecesLocations] = useState(false)
 	const [darkTheme, setDarkTheme] = useState(true)
     const themes = {
         // Set status bar color in these themes
@@ -33,15 +34,13 @@ function AppContextProvider(props) {
     }
 
     return <AppContext.Provider value={{
-        Socket,
-        setSocket,
-        usersCount,
-        setUsersCount,
+        Socket, setSocket,
+        usersCount, setUsersCount,
         clientId,
         clientName,
         messagesList,
-        darkTheme,
-        setDarkTheme,
+        piecesLocations, setPiecesLocations,
+        darkTheme, setDarkTheme,
         themes
     }}>
         {props.children}

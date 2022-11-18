@@ -3,7 +3,6 @@ const ioPort = process.env.WS_PORT || 80
 const { socketLog } = require('../commons')
 const { UserConnected } = require('./Users')
 const { MessageReceived } = require('./Messaging')
-const { EmitBoardLayout } = require('./Chessboard')
 
 init = (server) => {
     const { Server } = require("socket.io")

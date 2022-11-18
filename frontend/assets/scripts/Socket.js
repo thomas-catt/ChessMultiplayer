@@ -15,30 +15,42 @@ const connectSocketIO = ({ onConnect, introduction, onFailure, onDisconnect }) =
 
 }
 
+// Users.js:
+
 const onUsersCountReceive = (callback) => {
-	if (currentCallbacks.includes('connected-users')) return
+    if (currentCallbacks.includes('connected-users')) return
     
     socket.on('connected-users', callback)
     currentCallbacks.push('connected-users')
 }
+
+// Messaging.js:
 
 const broadcastTextMessage = (textMessage) => {
     socket.emit('text-message', textMessage)
 }
 
 const onTextMessageReceive = (callback) => {
-	if (currentCallbacks.includes('text-message')) return
+    if (currentCallbacks.includes('text-message')) return
     
     socket.on('text-message', callback)
     currentCallbacks.push('text-message')
 }
 
+// Chessboard.js:
 
+const onChessLayoutReceive = (callback) => {
+    if (currentCallbacks.includes('chess-layout')) return
+    
+    socket.on('chess-layout', callback)
+    currentCallbacks.push('chess-layout')  
+}
 
 export {
     socket,
     connectSocketIO,
     onUsersCountReceive,
     broadcastTextMessage,
-    onTextMessageReceive
+    onTextMessageReceive,
+    onChessLayoutReceive
 }

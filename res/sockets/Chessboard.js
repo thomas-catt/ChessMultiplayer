@@ -1,8 +1,10 @@
 const { socketLog } = require("../commons")
 
-const chessBoardLayout = [
-    // read notes.md
-]
+let chessBoardLayout = {
+    whitePawn1: [0, 0],
+    blackPawn1: [50, 50],
+    whiteKnight1: [100, 100],
+}
 
 // On: TEXT MESSAGE RECEIVE
 // const MessageReceived = (socket, io) => {
@@ -13,9 +15,9 @@ const chessBoardLayout = [
 
 // Emit: THE BOARD LAYOUT
 
-const EmitBoardLayout = (io, messageObject) => {
-    socketLog(`${messageObject.fullname}: `.green.bold, messageObject.message.white)
-    io.sockets.emit('text-message', messageObject)
+const EmitBoardLayout = (io) => {
+    // socketLog("Emitted board layout".blue)
+    io.sockets.emit('chess-layout', chessBoardLayout)
 }
 
 module.exports = {

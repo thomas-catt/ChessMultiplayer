@@ -1,12 +1,10 @@
 // continue socketio
 import { Button, Text } from 'react-native-paper';
 import { Dimensions, Image, Pressable, ScrollView, StyleSheet, Touchable, View } from 'react-native';
-import { Icon } from 'react-native-vector-icons/MaterialCommunityIcons';
-import { useContext, useEffect, useState } from 'react';
-import { AppContext, AppContextProvider } from '../scripts/AppContext'
+import {  useState } from 'react';
 import ChessPiece from '../components/ChessPiece'
 import Draggable from 'react-native-draggable'
-import { connectSocketIO, onUsersCountReceive } from '../scripts/Socket'
+import { onUsersCountReceive, onChessLayoutReceive } from '../scripts/Socket'
 
 export default function Home(props) {
     const [maxPieceZ, setMaxPieceZ] = useState(0)
@@ -15,11 +13,6 @@ export default function Home(props) {
         {id: 'Pawn1', side: 'black', name: "pawn"},
         {id: 'Knight1', side: 'white', name: "knight"},
     ]
-    const [piecesLocations, setPiecesLocations] = useState({
-        whitePawn1: [0, 0],
-        blackPawn1: [50, 50],
-        whiteKnight1: [100, 100],
-    })
     let previousDragCoordinates = false
     const [currentPressedPiece, setCurrentPressedPiece] = useState(false)
     
@@ -30,9 +23,17 @@ export default function Home(props) {
 		appContext.setUsersCount(newUsersCount)
 	})
 
-    const chessBoardPadding = windowDimensions.height/15
+	onChessLayoutReceive((chessLayout) => {
+        console.log("Chess layout received:", chessLayout)
+		appContext.setPiecesLocations(chessLayout)
+	})
+
+    const chessBoardPadding = windowDimensions.height/20
     let chessBoardSize = windowDimensions.width*0.9 
-    if (chessBoardSize > windowDimensions.height - 375) chessBoardSize = windowDimensions.height - 375
+    if (((chessBoardSize+(2*chessBoardPadding)) > windowDimensions.height - 375))
+        chessBoardSize = windowDimensions.height - 375
+    if ((chessBoardSize+(2*chessBoardPadding)) > windowDimensions.width)
+        chessBoardSize = windowDimensions.width-(2*chessBoardPadding)
     
     const chessAreaOuterPaddingX = windowDimensions.width - (chessBoardSize+chessBoardPadding)
     const chessAreaOuterPaddingY = windowDimensions.height - (chessBoardSize+chessBoardPadding)
@@ -52,6 +53,20 @@ export default function Home(props) {
             ]
         }
     }
+
+    const coordinatesPercentageConversion2 = ({coordinates, percentage}) => {
+        if (coordinates) {
+            return [
+                (coordinates[0]/(chessBoardSize+(chessBoardPadding*2)))*100,
+                (coordinates[1]/(chessBoardSize+(chessBoardPadding*2)))*100,
+            ]
+        } else if (percentage) {
+            return [
+                (percentage[0]/100)*chessBoardSize+(chessBoardPadding*2),
+                (percentage[1]/100)*chessBoardSize+(chessBoardPadding*2)
+            ]
+        }
+    }
     
 
     const onChessPieceReleased = () => {
@@ -61,21 +76,19 @@ export default function Home(props) {
     }
 
     const onChessBoardDragged = (event) => {
-        console.log("Drag Input: ", [event.nativeEvent.pageX, event.nativeEvent.pageY])
-        const [x, y] = coordinatesPercentageConversion({coordinates: [event.nativeEvent.pageX, event.nativeEvent.pageY]})
+        const [x, y] = [event.nativeEvent.pageX, event.nativeEvent.pageY]
+        console.log("Drag Input: ", `x: ${x}`, `y: ${y}`)
 
         if (!currentPressedPiece) {
             previousDragCoordinates = {x, y}
         }
 
         // console.log("Move " + currentPressedPiece + " to ", x, y)
-        // console.log("Converted XY(" + event.nativeEvent.pageX + ", " + event.nativeEvent.pageY + ") to %XY(" + x + ", " + y + ")")
-        // console.log("Converted %XY(" + x + ", " + y + ") to XY:", ...coordinatesPercentageConversion({percentage: [x, y]}))
 
         const pieceTouchingRange = 7.5
         let closestPiece = 'none'
-        Object.keys(piecesLocations).forEach(pieceId => {
-            const piece = piecesLocations[pieceId]
+        Object.keys(appContext.piecesLocations).forEach(pieceId => {
+            const piece = appContext.piecesLocations[pieceId]
             if ((Math.abs(piece[0] - x) < pieceTouchingRange) && (Math.abs(piece[1] - y) < pieceTouchingRange)) {
                 // this piece is in touching range
 
@@ -92,22 +105,22 @@ export default function Home(props) {
         }
 
 
-        // piecesLocations[currentPressedPiece] = [x, y]
-        // setPiecesLocations(piecesLocations)
+        // appContext.piecesLocations[currentPressedPiece] = [x, y]
+        // appContext.setPiecesLocations(appContext.piecesLocations)
     }
     
     
     const theme = appContext.themes.current()
 
     return <ScrollView contentContainerStyle={{padding: 32, display: "flex", justifyContent: "center", alignItems: "center"}}>
-        <View style={{
+        {appContext.piecesLocations ? <View style={{
             backgroundColor: theme.colors.elevation.level1,
             padding: chessBoardPadding,
             width: chessBoardSize+(chessBoardPadding*2),
             display: "flex",
             justifyContent: "center",
             alignItems: "center", 
-            borderRadius: 10
+            borderRadius: 10,
         }}>
             {
                 constPiecesData.map(pieceToRender => {
@@ -119,7 +132,7 @@ export default function Home(props) {
                         side={pieceToRender.side}
                         z={maxPieceZ}
                         pressed={currentPressedPiece == id}
-                        position={coordinatesPercentageConversion({percentage: piecesLocations[id]})}/>
+                        position={coordinatesPercentageConversion2({percentage: appContext.piecesLocations[id]})}/>
 
                 })
             }
@@ -139,10 +152,10 @@ export default function Home(props) {
                 <View style={{
                     width: chessBoardSize+(chessBoardPadding*2),
                     height: chessBoardSize+(chessBoardPadding*2),
-                    backgroundColor: "#88888888",
+                    backgroundColor: "#88888800",
                 }}></View>
             </Draggable>
-        </View>
+        </View> : <Text style={{opacity: 0.5}}>Please wait...</Text>}
 
     </ScrollView>
 }
