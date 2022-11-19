@@ -20,7 +20,7 @@ export default function ChessPiece(props) {
                 position: "absolute",
                 top: props.position[1],
                 left: props.position[0],
-                zIndex: props.z,
+                zIndex: 10+props.z,
             }}
         >
         <Avatar.Icon

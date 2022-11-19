@@ -6,61 +6,58 @@ import {  useState } from 'react';
 import ChessPiece from '../components/ChessPiece'
 import Draggable from 'react-native-draggable'
 import { onUsersCountReceive, onChessLayoutReceive } from '../scripts/Socket'
+    
+const windowDimensions = Dimensions.get('window')
+const statusBarHeight = StatusBar.currentHeight
 
-export default function Home(props) {
+const gridIndexToPercentage = (pieceCoords) => {
+    return [5 + pieceCoords[0]*10, 5 + pieceCoords[1]*10]
+}
+
+let chessBoardSize = (windowDimensions.width)*0.9 
+let chessBoardPadding = chessBoardSize/8
+if (((chessBoardSize+(2*chessBoardPadding)) > windowDimensions.height - 375))
+    chessBoardSize = windowDimensions.height - 375
+if ((chessBoardSize+(2*chessBoardPadding)) > windowDimensions.width)
+    chessBoardSize = windowDimensions.width-(2*chessBoardPadding)
+chessBoardPadding = chessBoardSize/8
+
+const coordinatesPercentageConversion = ({coordinates, percentage}) => {
+    if (coordinates) {
+        return [
+            (coordinates[0]/(chessBoardSize+(chessBoardPadding*2)))*100,
+            (coordinates[1]/(chessBoardSize+(chessBoardPadding*2)))*100,
+        ]
+    } else if (percentage) {
+        return [
+            ((percentage[0]/100)*(1.25))*chessBoardSize,
+            ((percentage[1]/100)*(1.25))*chessBoardSize
+        ]
+    }
+}
+
+const pieceSize = (chessBoardSize+2*chessBoardPadding)/10
+
+const ChessPieces = (props) => {
     const { appContext } = props.context
-    const [maxPieceZ, setMaxPieceZ] = useState(0)
+    const setPiecesLoaded = props.setPiecesLoaded
     const constPiecesData = appContext.constPiecesData
     const [currentPressedPiece, setCurrentPressedPiece] = useState(false)
     const [piecesLocations, setPiecesLocations] = useState(appContext.piecesLocations)
-    
-    const windowDimensions = Dimensions.get('window')
-    const statusBarHeight = StatusBar.currentHeight
-    
-	onUsersCountReceive((newUsersCount) => {
-		appContext.setUsersCount(newUsersCount)
-	})
 
-    const gridIndexToPercentage = (pieceCoords) => {
-        return [5 + pieceCoords[0]*10, 5 + pieceCoords[1]*10]
-    }
-    
     onChessLayoutReceive((chessLayout) => {
         console.log("Board layout received: ", piecesLocations)
         if (!piecesLocations) {
             for (var pieceId in chessLayout) {
                 chessLayout[pieceId] = gridIndexToPercentage(chessLayout[pieceId])
             }
+            setPiecesLoaded(true)
             setPiecesLocations(chessLayout)
             appContext.setPiecesLocations(chessLayout)
         }
         
 	})
-
-    let chessBoardSize = (windowDimensions.width)*0.9 
-    let chessBoardPadding = chessBoardSize/8
-    if (((chessBoardSize+(2*chessBoardPadding)) > windowDimensions.height - 375))
-        chessBoardSize = windowDimensions.height - 375
-    if ((chessBoardSize+(2*chessBoardPadding)) > windowDimensions.width)
-        chessBoardSize = windowDimensions.width-(2*chessBoardPadding)
-    chessBoardPadding = chessBoardSize/8
-
-    const coordinatesPercentageConversion = ({coordinates, percentage}) => {
-        if (coordinates) {
-            return [
-                (coordinates[0]/(chessBoardSize+(chessBoardPadding*2)))*100,
-                (coordinates[1]/(chessBoardSize+(chessBoardPadding*2)))*100,
-            ]
-        } else if (percentage) {
-            return [
-                ((percentage[0]/100)*(1.25))*chessBoardSize,
-                ((percentage[1]/100)*(1.25))*chessBoardSize
-            ]
-        }
-    }
-
-    const pieceSize = (chessBoardSize+2*chessBoardPadding)/10
-
+    
     const onChessPieceReleased = () => {
         console.log("Piece Released: " + currentPressedPiece)
         setCurrentPressedPiece(false)
@@ -100,33 +97,8 @@ export default function Home(props) {
         setCurrentPressedPiece(closestPiece)
     }
     
-    
-    const theme = appContext.themes.current()
-
-    return <View style={{
-        // position: "absolute",
-        // top: 0,
-        // left: 0,
-        // width: windowDimensions.width,
-        // height: windowDimensions.height*0.75,
-        // display: "flex",
-        // justifyContent: "center",
-        // alignItems: "center",
-        // borderWidth: 1,
-        // borderColor: "green"
-    }}>
-        {piecesLocations ? <View style={{
-            backgroundColor: theme.colors.elevation.level1,
-            width: chessBoardSize+(chessBoardPadding*2),
-            height: chessBoardSize+(chessBoardPadding*2),
-            position: "absolute",
-            top: (((windowDimensions.height/2)-56)-(chessBoardSize+(chessBoardPadding*2))/2)-Platform.select({android: statusBarHeight, default: 0}),
-            left: (windowDimensions.width/2)-(chessBoardSize+(chessBoardPadding*2))/2,
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center", 
-            borderRadius: 10,
-        }}>
+    return (
+        <>
             {
                 constPiecesData.map(pieceToRender => {
                     const id = pieceToRender.side + pieceToRender.id
@@ -138,7 +110,7 @@ export default function Home(props) {
                         id={id}
                         name={pieceToRender.name}
                         side={pieceToRender.side}
-                        z={maxPieceZ}
+                        z={0}
                         size={pieceSize}
                         pressed={currentPressedPiece == id}
                         position={pieceCoords.map(a => a-(pieceSize/2))}/>
@@ -146,12 +118,6 @@ export default function Home(props) {
 
                 })
             }
-            <Image source={require('../images/ChessBoard.png')} style={{
-                width: chessBoardSize,
-                height: chessBoardSize,
-                borderRadius: 10,
-                zIndex: -1,
-            }} />
             <Draggable
                 shouldReverse
                 style={{position: "absolute", top: 0, left: 0, zIndex:100}}
@@ -165,6 +131,53 @@ export default function Home(props) {
                     backgroundColor: "#88888800",
                 }}></View>
             </Draggable>
+        </>
+    )
+}
+
+export default function Home(props) {
+    const { appContext } = props.context
+    const [piecesLoaded, setPiecesLoaded] = useState(false)
+
+    
+	onUsersCountReceive((newUsersCount) => {
+		appContext.setUsersCount(newUsersCount)
+	})
+    
+    const theme = appContext.themes.current()
+    console.log(piecesLoaded)
+
+    return <View style={{
+        // position: "absolute",
+        // top: 0,
+        // left: 0,
+        // width: windowDimensions.width,
+        // height: windowDimensions.height*0.75,
+        // display: "flex",
+        // justifyContent: "center",
+        // alignItems: "center",
+        // borderWidth: 1,
+        // borderColor: "green"
+    }}>
+        {piecesLoaded ? <View style={{
+            backgroundColor: theme.colors.elevation.level1,
+            width: chessBoardSize+(chessBoardPadding*2),
+            height: chessBoardSize+(chessBoardPadding*2),
+            position: "absolute",
+            top: (((windowDimensions.height/2)-56)-(chessBoardSize+(chessBoardPadding*2))/2)-Platform.select({android: statusBarHeight, default: 0}),
+            left: (windowDimensions.width/2)-(chessBoardSize+(chessBoardPadding*2))/2,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center", 
+            borderRadius: 10,
+        }}>
+            <Image source={require('../images/ChessBoard.png')} style={{
+                width: chessBoardSize,
+                height: chessBoardSize,
+                borderRadius: 10,
+                zIndex: -1,
+            }} />
+            <ChessPieces context={{appContext}} setPiecesLoaded={setPiecesLoaded}/>
         </View> : <Text style={{opacity: 0.5}}>Please wait...</Text>}
 
     </View>
