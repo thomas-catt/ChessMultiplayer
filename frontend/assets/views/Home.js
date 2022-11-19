@@ -14,6 +14,14 @@ const gridIndexToPercentage = (pieceCoords) => {
     return [5 + pieceCoords[0]*10, 5 + pieceCoords[1]*10]
 }
 
+const convertToUsableDragInput = (event) => {
+    return coordinatesPercentageConversion({coordinates: [
+        event.nativeEvent.pageX-(windowDimensions.width-(chessBoardSize+chessBoardPadding*2))/2,
+        event.nativeEvent.pageY-(windowDimensions.height-chessBoardSize)/2+chessBoardPadding
+    ]})
+
+}
+
 let chessBoardSize = (windowDimensions.width)*0.9 
 let chessBoardPadding = chessBoardSize/8
 if (((chessBoardSize+(2*chessBoardPadding)) > windowDimensions.height - 375))
@@ -42,11 +50,10 @@ const ChessPieces = (props) => {
     const { appContext } = props.context
     const setPiecesLoaded = props.setPiecesLoaded
     const constPiecesData = appContext.constPiecesData
-    const [currentPressedPiece, setCurrentPressedPiece] = useState(false)
+    let [currentPressedPiece, setCurrentPressedPiece] = useState(false)
     const [piecesLocations, setPiecesLocations] = useState(appContext.piecesLocations)
 
     onChessLayoutReceive((chessLayout) => {
-        console.log("Board layout received: ", piecesLocations)
         if (!piecesLocations) {
             for (var pieceId in chessLayout) {
                 chessLayout[pieceId] = gridIndexToPercentage(chessLayout[pieceId])
@@ -57,6 +64,12 @@ const ChessPieces = (props) => {
         }
         
 	})
+
+    /*
+    const onChessBoardPressed = (pieceId) => {
+        console.log("Piece Pressed: ", pieceId)
+        currentPressedPiece = pieceId
+    }
     
     const onChessPieceReleased = () => {
         console.log("Piece Released: " + currentPressedPiece)
@@ -64,12 +77,14 @@ const ChessPieces = (props) => {
         appContext.piecesLocations = piecesLocations
     }
 
-    const onChessBoardDragged = (event) => {
-        const [x, y] = coordinatesPercentageConversion({coordinates: [
-            event.nativeEvent.pageX-(windowDimensions.width-(chessBoardSize+chessBoardPadding*2))/2,
-            event.nativeEvent.pageY-(windowDimensions.height-chessBoardSize)/2+chessBoardPadding
-        ]})
+    const onChessPieceDragged = (event) => {
+        const [x, y] = convertToUsableDragInput(event)
 
+        setPiecesLocations({...piecesLocations, [currentPressedPiece]: [x, y]})
+    }
+
+    const onChessBoardDragged = (event) => {
+        const [x, y] = convertToUsableDragInput(event)
         const pieceTouchingRange = 5
         let closestPiece = currentPressedPiece
         if (!currentPressedPiece) {
@@ -96,11 +111,12 @@ const ChessPieces = (props) => {
         
         setCurrentPressedPiece(closestPiece)
     }
+    */
     
     return (
         <>
             {
-                constPiecesData.map(pieceToRender => {
+                piecesLocations ? [...constPiecesData.map(pieceToRender => {
                     const id = pieceToRender.side + pieceToRender.id
                     let pieceCoords = coordinatesPercentageConversion({percentage: piecesLocations[id]})
 
@@ -108,29 +124,39 @@ const ChessPieces = (props) => {
                         return <ChessPiece
                         key={id}
                         id={id}
+                        clientId={appContext.clientId}
                         name={pieceToRender.name}
                         side={pieceToRender.side}
-                        z={0}
+                        z={-1}
                         size={pieceSize}
                         pressed={currentPressedPiece == id}
-                        position={pieceCoords.map(a => a-(pieceSize/2))}/>
+                        // press={onChessBoardPressed}
+                        // release={onChessPieceReleased}
+                        convertToUsableDragInput={convertToUsableDragInput}
+                        coordinatesPercentageConversion={coordinatesPercentageConversion}
+                        piecesLocations={piecesLocations}
+                        setPiecesLocations={setPiecesLocations}                        
+                        position={pieceCoords}/>
                     }
 
-                })
+                }),
+                // <Draggable
+                //     key="chessBoardDraggable"
+                //     // shouldReverse
+                //     style={{position: "absolute", top: 0, left: 0, zIndex:100000}}
+                //     onDrag={onChessBoardDragged}
+                //     onPressIn={onChessBoardDragged}
+                //     onPressOut={onChessPieceReleased}
+                //     onDragRelease={onChessPieceReleased}>
+                //     <View style={{
+                //         width: chessBoardSize+(chessBoardPadding*2),
+                //         height: chessBoardSize+(chessBoardPadding*2),
+                //         backgroundColor: "#88888822",
+                //     }}></View>
+                // </Draggable>
+                ] : <Text style={{opacity: 0.5}}>Please wait...</Text>
             }
-            <Draggable
-                shouldReverse
-                style={{position: "absolute", top: 0, left: 0, zIndex:100}}
-                onDrag={onChessBoardDragged}
-                onPressIn={onChessBoardDragged}
-                onPressOut={onChessPieceReleased}
-                onDragRelease={onChessPieceReleased}>
-                <View style={{
-                    width: chessBoardSize+(chessBoardPadding*2),
-                    height: chessBoardSize+(chessBoardPadding*2),
-                    backgroundColor: "#88888800",
-                }}></View>
-            </Draggable>
+            
         </>
     )
 }
@@ -145,7 +171,6 @@ export default function Home(props) {
 	})
     
     const theme = appContext.themes.current()
-    console.log(piecesLoaded)
 
     return <View style={{
         // position: "absolute",
@@ -159,7 +184,7 @@ export default function Home(props) {
         // borderWidth: 1,
         // borderColor: "green"
     }}>
-        {piecesLoaded ? <View style={{
+        {<View style={{
             backgroundColor: theme.colors.elevation.level1,
             width: chessBoardSize+(chessBoardPadding*2),
             height: chessBoardSize+(chessBoardPadding*2),
@@ -178,7 +203,7 @@ export default function Home(props) {
                 zIndex: -1,
             }} />
             <ChessPieces context={{appContext}} setPiecesLoaded={setPiecesLoaded}/>
-        </View> : <Text style={{opacity: 0.5}}>Please wait...</Text>}
+        </View>}
 
     </View>
 }

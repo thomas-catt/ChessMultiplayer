@@ -5,12 +5,13 @@ import { v4 as uuidv4 } from 'uuid'
 import { Platform } from 'react-native';
 
 const AppContext = createContext()
-const clientId = uuidv4().split("-")[0].toUpperCase().substring(4)
+const clientId = uuidv4()
+const clientIdShort = clientId.substring(0, 4).toUpperCase()
 
 function AppContextProvider(props) {
     const [Socket, setSocket] = useState();
     const [usersCount, setUsersCount] = useState("Waiting...");
-    const clientName = Platform.select({android: "AndroidClient", ios: "iOSClient", default: "WebClient"}) + " " + clientId
+    const clientName = Platform.select({android: "AndroidClient", ios: "iOSClient", default: "WebClient"}) + " " + clientIdShort
     let messagesList = []
     const constPiecesData = [
         {id: 'Pawn1', side: 'white', name: "pawn"},
@@ -87,6 +88,7 @@ function AppContextProvider(props) {
         Socket, setSocket,
         usersCount, setUsersCount,
         clientId,
+        clientIdShort,
         clientName,
         messagesList,
         constPiecesData,

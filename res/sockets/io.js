@@ -3,6 +3,7 @@ const ioPort = process.env.WS_PORT || 80
 const { socketLog } = require('../commons')
 const { UserConnected } = require('./Users')
 const { MessageReceived } = require('./Messaging')
+const { PieceDragReceived } = require('./Chessboard')
 
 init = (server) => {
     const { Server } = require("socket.io")
@@ -16,6 +17,7 @@ init = (server) => {
     io.on('connection', (socket) => {
         UserConnected(socket, io)
         MessageReceived(socket, io)
+        PieceDragReceived(socket, io)
     })
 
     io.listen(ioPort)

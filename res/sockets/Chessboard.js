@@ -52,11 +52,16 @@ let chessBoardLayout = {
 }
 
 // On: TEXT MESSAGE RECEIVE
-// const MessageReceived = (socket, io) => {
-//     socket.on('text-message', (messageObject) => {
-//         EmitReceivedMessage(io, messageObject)
-//     })
-// }
+
+const PieceDragReceived = (socket, io) => {
+    Object.keys(chessBoardLayout).forEach(pieceId => {
+        const listenerName = 'chess-'+pieceId+'-drag'
+        socket.on(listenerName, (piece) => {
+            socketLog("Piece Drag Received".blue)
+            EmitPieceDrag(io, listenerName, piece)
+        })
+    })
+}
 
 // Emit: THE BOARD LAYOUT
 
@@ -65,6 +70,15 @@ const EmitBoardLayout = (io) => {
     io.sockets.emit('chess-layout', chessBoardLayout)
 }
 
+// Emit: THE RECEIVED PIECE DRAG
+
+const EmitPieceDrag = (io, listenerName, piece) => {
+    // socketLog("Emitted board layout".blue)
+    io.sockets.emit(listenerName, piece)
+}
+
 module.exports = {
-    EmitBoardLayout
+    PieceDragReceived,
+    EmitBoardLayout,
+    EmitPieceDrag
 }
