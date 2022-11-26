@@ -9,6 +9,16 @@ import More from '../views/More'
 import { connectSocketIO, onUsersCountReceive } from '../scripts/Socket'
 
 
+const UsersCounter = (props) => {
+	const appContext = props.appContext
+	const [usersCount, setUsersCount] = useState("Waiting...")
+	onUsersCountReceive((newUsersCount) => {
+		setUsersCount(newUsersCount)
+	})
+
+	return <Button textColor={appContext.darkTheme ? "#80e27e" : "#087f23"} icon="account">{usersCount}</Button>
+}
+
 export default function App(props) {
 	const { appContext, AppContextProvider } = props.context
 
@@ -44,9 +54,7 @@ export default function App(props) {
 		onDisconnect: () => setLoading('false')
 	})
 	    
-	onUsersCountReceive((newUsersCount) => {
-		appContext.setUsersCount(newUsersCount)
-	})
+
 
     const theme = appContext.themes.current()
 
@@ -68,7 +76,7 @@ export default function App(props) {
 					{
 						{
 							loading:<Button></Button>,
-							connected:<><Button textColor={appContext.darkTheme ? "#80e27e" : "#087f23"} icon="account">{appContext.usersCount}</Button></>,
+							connected:<><UsersCounter appContext={appContext}/></>,
 							fail:<>eror</>,
 							false:<Button textColor={theme.colors.error}>Failed to connect, server offline.</Button>,
 						}[loading]
@@ -77,7 +85,7 @@ export default function App(props) {
 					<Appbar.Action icon="brightness-6" onPress={props.changeTheme} />
 				</Appbar.Header>
 				{
-					loading == "loading" ? <ProgressBar indeterminate={true} style={{backgroundColor: appContext.themes.current().colors.background}} /> : <></>
+					((loading == "loading") || (appContext.piecesLocations === false)) ? <ProgressBar indeterminate={true} style={{backgroundColor: appContext.themes.current().colors.background}} /> : <></>
 				}
 				<BottomNavigation
 					navigationState={{ index, routes }}

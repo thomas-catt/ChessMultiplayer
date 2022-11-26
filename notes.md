@@ -1,8 +1,9 @@
 # Required fixes:
 These are some major bugs I need to fix:
 
-#### Incomplete Multiplayer:
-If ClientA joins first, and ClientB joins later, then ClientB will only receive `PieceDrag`, and ClientA will be unable to update its piece positions (while both clients still receiving `PieceDrag`). No idea why this is happening, but force updating the entire `appContext.piecesLocations` **does** (kinda) fix it.
-
-#### A connect/disconnect from any client resets board:
-Apparently this happens when `appContext.setPiecesLocations` resets to `false` when a disconnection occurs. Maybe yet another `AppContext` fuckery don't know.
+#### Server-centralized pieces layout storage:
+Currently all the pieces locations are passed to each of the clients individually. So if a new user joins the game, they don't receive the current game progress from the server, but rather the default chess layout (which being the only progress of the game the server knows about). 
+- Make the server store the `piecesLocations` as it receives the inputs.
+- Then hand over this data to any new user that joins.
+- The `gridIndexToPercentage()` function should probably be server-sided since now the server should contain `piecesLocations` **in percentages** rather than **grid indexes**.
+- Keep the grid indexes, but just manually call `gridIndexToPercentage()` once to finally store the `piecesLocations` in percentages. This object will modify as the server receives pieces input.

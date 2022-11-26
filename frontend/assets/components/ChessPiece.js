@@ -5,26 +5,50 @@ const { StyleSheet, Text, View, Pressable, Dimensions, ShadowPropTypesIOS } = re
 const { Button, Avatar } = require('react-native-paper');
 import { broadcastChessPieceDrag, onChessPieceDragReceived } from '../scripts/Socket'
 
+let broadcastCooldownReady = true
+
 export default function ChessPiece(props) {
     const windowDimensions = Dimensions.get('window')
-    const [pressed, setPressed] = useState(props.pressed)
+    const [pressed, setPressed] = useState(false)
     const [position, setPosition] = useState(props.position)
 
     onChessPieceDragReceived(props.id, (piece) => {
         if (piece.clientId != props.clientId) {
-            const receivedCoords = props.coordinatesPercentageConversion({percentage: piece.position})
-            // console.log(receivedCoords)
-            setPosition(receivedCoords)
-            props.setPiecesLocations({...props.piecesLocations, [props.id]: piece.position})
+            if (piece.phase == "release") {
+                props.setPiecesLocations({...props.piecesLocations, [props.id]: props.coordinatesPercentageConversion({coordinates: position})})
+            } else {
+                const receivedCoords = props.coordinatesPercentageConversion({percentage: piece.position})
+                setPosition(receivedCoords)                
+            }
+
         }
     })
 
-    const onPieceDrag = (event) => {
+    const broadcastChessPieceInput = (event, phase) => {
+        let positionToSend = props.convertToUsableDragInput(event)
+        if (props.flipped) {
+            positionToSend = props.getFlippedPercentages(positionToSend)
+        }
+        if (phase == "release") {
+            props.setPiecesLocations({...props.piecesLocations, [props.id]: positionToSend})
+        }
+
         broadcastChessPieceDrag({
-            id: props.id,
             clientId: props.clientId,
-            position: props.convertToUsableDragInput(event)
+            id: props.id,
+            phase: phase,
+            position: positionToSend
         })
+    }
+    
+    const onPieceDrag = (event) => {
+        if (broadcastCooldownReady) {
+            broadcastChessPieceInput(event, "drag")
+            broadcastCooldownReady = false
+            setTimeout(() => {
+                broadcastCooldownReady = true
+            }, 17)            
+        }
     }
 
     return (
@@ -41,9 +65,13 @@ export default function ChessPiece(props) {
             }}
             onDragRelease={(event) => {
                 setPressed(false)
+                broadcastChessPieceInput(event, "release")
             }}
             onDrag={(event) => {
-                const [x, y] = props.coordinatesPercentageConversion({percentage: props.convertToUsableDragInput(event)})
+                let [x, y] = props.coordinatesPercentageConversion({percentage: props.convertToUsableDragInput(event)})
+                if (props.flipped) {
+                    [x, y] = props.coordinatesPercentageConversion({percentage: props.getFlippedPercentages(props.convertToUsableDragInput(event))})
+                }
                 setPosition([x, y])
                 onPieceDrag(event)
                 if (!pressed) setPressed(true)
@@ -60,6 +88,7 @@ export default function ChessPiece(props) {
             style={{
                 // backgroundColor: "#"+((""+Math.round(position[0]*100))+(""+Math.round(position[1]*100))).substring(0, 6),
                 backgroundColor: pressed ? "#88888833" : "#00000000",
+                transform: [{rotate: props.flipped ? '180deg' : '0deg'}],
                 borderWidth: 1,
                 borderRadius: 0,
                 borderColor: pressed ? "#88888866" : "#00000000",

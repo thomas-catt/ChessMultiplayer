@@ -1,5 +1,5 @@
 import { io } from 'socket.io-client';
-const socketUrl = "http://192.168.1.5:4000/"
+const socketUrl = "http://192.168.1.4:4000/"
 
 let socket = false
 let currentCallbacks = []
@@ -48,7 +48,7 @@ const onChessLayoutReceive = (callback) => {
 
 const onChessPieceDragReceived = (pieceId, callback) => {
     const listenerName = 'chess-'+pieceId+'-drag'
-    if (currentCallbacks.includes(listenerName)) return
+    if (currentCallbacks.includes(listenerName)) socket.off(listenerName)
     
     socket.on(listenerName, callback)
     currentCallbacks.push(listenerName)  

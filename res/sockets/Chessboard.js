@@ -57,7 +57,7 @@ const PieceDragReceived = (socket, io) => {
     Object.keys(chessBoardLayout).forEach(pieceId => {
         const listenerName = 'chess-'+pieceId+'-drag'
         socket.on(listenerName, (piece) => {
-            socketLog("Piece Drag Received".blue)
+            // socketLog("Piece Drag Received".blue)
             EmitPieceDrag(io, listenerName, piece)
         })
     })
@@ -66,7 +66,7 @@ const PieceDragReceived = (socket, io) => {
 // Emit: THE BOARD LAYOUT
 
 const EmitBoardLayout = (io) => {
-    // socketLog("Emitted board layout".blue)
+    socketLog("Emitted board layout".blue)
     io.sockets.emit('chess-layout', chessBoardLayout)
 }
 

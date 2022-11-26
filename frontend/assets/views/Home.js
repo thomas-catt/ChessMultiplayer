@@ -1,10 +1,8 @@
-// DISPLACEMENT
 import { Button, Text } from 'react-native-paper';
 import { Platform, StatusBar } from 'react-native';
 import { Dimensions, Image, Pressable, ScrollView, StyleSheet, Touchable, View } from 'react-native';
 import {  useState } from 'react';
 import ChessPiece from '../components/ChessPiece'
-import Draggable from 'react-native-draggable'
 import { onUsersCountReceive, onChessLayoutReceive } from '../scripts/Socket'
     
 const windowDimensions = Dimensions.get('window')
@@ -44,22 +42,31 @@ const coordinatesPercentageConversion = ({coordinates, percentage}) => {
     }
 }
 
+const getFlippedPercentages = (percentage) => {
+    return [100-percentage[0], 100-percentage[1]]
+}
+
 const pieceSize = (chessBoardSize+2*chessBoardPadding)/10
+
+let piecesLocations = false
 
 const ChessPieces = (props) => {
     const { appContext } = props.context
     const setPiecesLoaded = props.setPiecesLoaded
     const constPiecesData = appContext.constPiecesData
     let [currentPressedPiece, setCurrentPressedPiece] = useState(false)
-    const [piecesLocations, setPiecesLocations] = useState(appContext.piecesLocations)
+    // const [piecesLocations, setPiecesLocations] = useState(appContext.piecesLocations)
 
+    // if (piecesLocations && (appContext.piecesLocations === false)) appContext.setPiecesLocations(piecesLocations)
+    
     onChessLayoutReceive((chessLayout) => {
-        if (!piecesLocations) {
+        console.log("Chess layout received and current chess layout is: ", piecesLocations)
+        if (piecesLocations === false) {
             for (var pieceId in chessLayout) {
                 chessLayout[pieceId] = gridIndexToPercentage(chessLayout[pieceId])
             }
             setPiecesLoaded(true)
-            setPiecesLocations(chessLayout)
+            piecesLocations = chessLayout
             appContext.setPiecesLocations(chessLayout)
         }
         
@@ -129,13 +136,16 @@ const ChessPieces = (props) => {
                         side={pieceToRender.side}
                         z={-1}
                         size={pieceSize}
-                        pressed={currentPressedPiece == id}
                         // press={onChessBoardPressed}
                         // release={onChessPieceReleased}
+                        flipped={props.flipped}
+                        getFlippedPercentages={getFlippedPercentages}
                         convertToUsableDragInput={convertToUsableDragInput}
                         coordinatesPercentageConversion={coordinatesPercentageConversion}
                         piecesLocations={piecesLocations}
-                        setPiecesLocations={setPiecesLocations}                        
+                        setPiecesLocations={(v) => {
+                            piecesLocations = v
+                        }}                        
                         position={pieceCoords}/>
                     }
 
@@ -164,13 +174,10 @@ const ChessPieces = (props) => {
 export default function Home(props) {
     const { appContext } = props.context
     const [piecesLoaded, setPiecesLoaded] = useState(false)
+    const [boardFlipped, setBoardFlipped] = useState(false)
 
-    
-	onUsersCountReceive((newUsersCount) => {
-		appContext.setUsersCount(newUsersCount)
-	})
-    
     const theme = appContext.themes.current()
+
 
     return <View style={{
         // position: "absolute",
@@ -184,6 +191,9 @@ export default function Home(props) {
         // borderWidth: 1,
         // borderColor: "green"
     }}>
+        <View style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
+            <Button mode='outlined' onPress={() => setBoardFlipped(!boardFlipped)} icon="flip-vertical">Flip Board</Button>
+        </View>
         {<View style={{
             backgroundColor: theme.colors.elevation.level1,
             width: chessBoardSize+(chessBoardPadding*2),
@@ -193,7 +203,8 @@ export default function Home(props) {
             left: (windowDimensions.width/2)-(chessBoardSize+(chessBoardPadding*2))/2,
             display: "flex",
             justifyContent: "center",
-            alignItems: "center", 
+            alignItems: "center",
+            transform: [{rotate: boardFlipped ? '180deg' : '0deg'}],
             borderRadius: 10,
         }}>
             <Image source={require('../images/ChessBoard.png')} style={{
@@ -202,7 +213,7 @@ export default function Home(props) {
                 borderRadius: 10,
                 zIndex: -1,
             }} />
-            <ChessPieces context={{appContext}} setPiecesLoaded={setPiecesLoaded}/>
+            <ChessPieces flipped={boardFlipped} context={{appContext}} setPiecesLoaded={setPiecesLoaded}/>
         </View>}
 
     </View>
