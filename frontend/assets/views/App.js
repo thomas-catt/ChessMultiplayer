@@ -1,12 +1,12 @@
 import { StatusBar } from 'expo-status-bar';
-import { Appbar, BottomNavigation, Button, ProgressBar, Text, TouchableRipple } from 'react-native-paper';
+import { Appbar, BottomNavigation, Button, ProgressBar, Snackbar, Text, TouchableRipple } from 'react-native-paper';
 import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 import { useContext, useEffect, useState } from 'react';
 import Home from '../views/Home'
 import Messaging from '../views/Messaging'
 import More from '../views/More'
 
-import { connectSocketIO, onUsersCountReceive } from '../scripts/Socket'
+import { connectSocketIO, onTextMessageReceive, onUsersCountReceive } from '../scripts/Socket'
 
 
 const UsersCounter = (props) => {
@@ -17,6 +17,25 @@ const UsersCounter = (props) => {
 	})
 
 	return <Button textColor={appContext.darkTheme ? "#80e27e" : "#087f23"} icon="account">{usersCount}</Button>
+}
+
+const MessagesListener = (props) => {
+	const appContext = props.appContext
+	
+    const [visible, setVisible] = useState(false)
+	const [message, setMessage] = useState("")
+    
+	onTextMessageReceive((m) => {
+        const newMsg = {...m, sent: true, own: m.userId === appContext.clientId}
+        appContext.messagesList = [newMsg, ...appContext.messagesList]
+		appContext.update()
+        setMessage(m.fullname+": " + m.message)
+		setVisible(true)
+    })
+
+    return <Snackbar duration={2500} visible={visible} onDismiss={() => setVisible(false)} action={{label:"Dismiss"}}>
+        {message}
+    </Snackbar>
 }
 
 export default function App(props) {
@@ -41,10 +60,10 @@ export default function App(props) {
 
 
 	const [loading, setLoading] = useState('ready')
-
+	
 	let socket
 	useEffect(() => {
-		appContext.setSocket(socket)
+		// appContext.setSocket(socket)
 	})
 
 	if (loading == 'ready') setLoading("loading"); connectSocketIO({
@@ -92,6 +111,7 @@ export default function App(props) {
 					onIndexChange={setIndex}
 					renderScene={renderScene}
 				/>
+				{routes[index].key == "messaging" ? <></> : <MessagesListener appContext={appContext}/>}
 			</AppContextProvider>
 	);
 }

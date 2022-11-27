@@ -9,7 +9,7 @@ const clientId = uuidv4()
 const clientIdShort = clientId.substring(0, 4).toUpperCase()
 
 function AppContextProvider(props) {
-    const [Socket, setSocket] = useState();
+    const [_update, update] = useState();
     const clientName = Platform.select({android: "AndroidClient", ios: "iOSClient", default: "WebClient"}) + " " + clientIdShort
     let messagesList = []
     const constPiecesData = [
@@ -84,7 +84,7 @@ function AppContextProvider(props) {
     }
 
     return <AppContext.Provider value={{
-        Socket, setSocket,
+        update,
         clientId,
         clientIdShort,
         clientName,

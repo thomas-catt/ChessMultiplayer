@@ -1,4 +1,4 @@
-import { Button, Text } from 'react-native-paper';
+import { Button, Snackbar, Text } from 'react-native-paper';
 import { Platform, StatusBar } from 'react-native';
 import { Dimensions, Image, Pressable, ScrollView, StyleSheet, Touchable, View } from 'react-native';
 import {  useState } from 'react';
@@ -128,6 +128,7 @@ const ChessPieces = (props) => {
                         key={id}
                         id={id}
                         clientId={appContext.clientId}
+                        clientName={appContext.clientName}
                         name={pieceToRender.name}
                         side={pieceToRender.side}
                         z={-1}
@@ -172,11 +173,6 @@ export default function Home(props) {
     const [piecesLoaded, setPiecesLoaded] = useState(false)
     const [boardFlipped, setBoardFlipped] = useState(false)
 
-    onTextMessageReceive((m) => {
-        const newMsg = {...m, sent: true, own: m.userId === appContext.clientId}
-        appContext.messagesList = [newMsg, ...appContext.messagesList]
-    })
-    
     const theme = appContext.themes.current()
 
     return <View style={{
@@ -215,6 +211,5 @@ export default function Home(props) {
             }} />
             <ChessPieces flipped={boardFlipped} context={{appContext}} setPiecesLoaded={setPiecesLoaded}/>
         </View>}
-
     </View>
 }
