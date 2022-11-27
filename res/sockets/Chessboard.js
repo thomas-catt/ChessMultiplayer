@@ -51,13 +51,24 @@ let chessBoardLayout = {
     blackQueen9: [5, 9],
 }
 
-// On: TEXT MESSAGE RECEIVE
+const gridIndexToPercentage = (pieceCoords) => {
+    return [5 + pieceCoords[0]*10, 5 + pieceCoords[1]*10]
+}
+
+for (var pieceId in chessBoardLayout) {
+    chessBoardLayout[pieceId] = gridIndexToPercentage(chessBoardLayout[pieceId])
+}
+
+
+
+// On: PIECE DRAG RECEIVE
 
 const PieceDragReceived = (socket, io) => {
     Object.keys(chessBoardLayout).forEach(pieceId => {
         const listenerName = 'chess-'+pieceId+'-drag'
         socket.on(listenerName, (piece) => {
-            // socketLog("Piece Drag Received".blue)
+            if (piece.phase == "release") chessBoardLayout[piece.id] = piece.position
+            
             EmitPieceDrag(io, listenerName, piece)
         })
     })
@@ -66,14 +77,13 @@ const PieceDragReceived = (socket, io) => {
 // Emit: THE BOARD LAYOUT
 
 const EmitBoardLayout = (io) => {
-    socketLog("Emitted board layout".blue)
+    // socketLog("Emitted board layout".blue)
     io.sockets.emit('chess-layout', chessBoardLayout)
 }
 
 // Emit: THE RECEIVED PIECE DRAG
 
 const EmitPieceDrag = (io, listenerName, piece) => {
-    // socketLog("Emitted board layout".blue)
     io.sockets.emit(listenerName, piece)
 }
 

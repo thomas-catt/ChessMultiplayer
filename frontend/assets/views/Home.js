@@ -3,14 +3,10 @@ import { Platform, StatusBar } from 'react-native';
 import { Dimensions, Image, Pressable, ScrollView, StyleSheet, Touchable, View } from 'react-native';
 import {  useState } from 'react';
 import ChessPiece from '../components/ChessPiece'
-import { onUsersCountReceive, onChessLayoutReceive } from '../scripts/Socket'
+import { onUsersCountReceive, onChessLayoutReceive, onTextMessageReceive } from '../scripts/Socket'
     
 const windowDimensions = Dimensions.get('window')
 const statusBarHeight = StatusBar.currentHeight
-
-const gridIndexToPercentage = (pieceCoords) => {
-    return [5 + pieceCoords[0]*10, 5 + pieceCoords[1]*10]
-}
 
 const convertToUsableDragInput = (event) => {
     return coordinatesPercentageConversion({coordinates: [
@@ -60,11 +56,11 @@ const ChessPieces = (props) => {
     // if (piecesLocations && (appContext.piecesLocations === false)) appContext.setPiecesLocations(piecesLocations)
     
     onChessLayoutReceive((chessLayout) => {
-        console.log("Chess layout received and current chess layout is: ", piecesLocations)
+        // console.log("Chess layout received and current chess layout is: ", piecesLocations)
         if (piecesLocations === false) {
-            for (var pieceId in chessLayout) {
-                chessLayout[pieceId] = gridIndexToPercentage(chessLayout[pieceId])
-            }
+            // for (var pieceId in chessLayout) {
+            //     chessLayout[pieceId] = gridIndexToPercentage(chessLayout[pieceId])
+            // }
             setPiecesLoaded(true)
             piecesLocations = chessLayout
             appContext.setPiecesLocations(chessLayout)
@@ -164,7 +160,7 @@ const ChessPieces = (props) => {
                 //         backgroundColor: "#88888822",
                 //     }}></View>
                 // </Draggable>
-                ] : <Text style={{opacity: 0.5}}>Please wait...</Text>
+                ] : <Text style={{opacity: 0.5, transform: [{rotate: props.flipped ? '180deg' : '0deg'}],}}>Please wait...</Text>
             }
             
         </>
@@ -176,8 +172,12 @@ export default function Home(props) {
     const [piecesLoaded, setPiecesLoaded] = useState(false)
     const [boardFlipped, setBoardFlipped] = useState(false)
 
+    onTextMessageReceive((m) => {
+        const newMsg = {...m, sent: true, own: m.userId === appContext.clientId}
+        appContext.messagesList = [newMsg, ...appContext.messagesList]
+    })
+    
     const theme = appContext.themes.current()
-
 
     return <View style={{
         // position: "absolute",

@@ -1,5 +1,5 @@
 import { io } from 'socket.io-client';
-const socketUrl = "http://192.168.1.4:4000/"
+const socketUrl = "http://192.168.1.20:4000/"
 
 let socket = false
 let currentCallbacks = []
@@ -18,7 +18,10 @@ const connectSocketIO = ({ onConnect, introduction, onFailure, onDisconnect }) =
 // Users.js:
 
 const onUsersCountReceive = (callback) => {
-    if (currentCallbacks.includes('connected-users')) return
+    if (currentCallbacks.includes('connected-users')) {
+        socket.off('connected-users')
+        currentCallbacks = currentCallbacks.filter(a => a.name != 'connected-users')  
+    }
     
     socket.on('connected-users', callback)
     currentCallbacks.push('connected-users')
@@ -31,8 +34,10 @@ const broadcastTextMessage = (textMessage) => {
 }
 
 const onTextMessageReceive = (callback) => {
-    if (currentCallbacks.includes('text-message')) return
-    
+    if (currentCallbacks.includes('text-message')) {
+        socket.off('text-message')
+        currentCallbacks = currentCallbacks.filter(a => a.name != 'text-message')  
+    }    
     socket.on('text-message', callback)
     currentCallbacks.push('text-message')
 }
@@ -48,7 +53,10 @@ const onChessLayoutReceive = (callback) => {
 
 const onChessPieceDragReceived = (pieceId, callback) => {
     const listenerName = 'chess-'+pieceId+'-drag'
-    if (currentCallbacks.includes(listenerName)) socket.off(listenerName)
+    if (currentCallbacks.includes(listenerName)) {
+        socket.off(listenerName)
+        currentCallbacks = currentCallbacks.filter(a => a.name != listenerName)  
+    }
     
     socket.on(listenerName, callback)
     currentCallbacks.push(listenerName)  

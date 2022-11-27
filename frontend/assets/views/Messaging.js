@@ -13,7 +13,7 @@ function MessagesListView(props) {
     onTextMessageReceive((m) => {
         if ((m.userId === appContext.clientId)) {
             appContext.messagesList = appContext.messagesList.map(a => a.id === m.id ? {...a, sent: true, own: true} : {...a})
-            console.log("Confirmed own message:", m.message)
+            // console.log("Confirmed own message:", m.message)
         } else {
             const newMsg = {...m, sent: true, own: m.userId === appContext.clientId}
             appContext.messagesList = [newMsg, ...appContext.messagesList]
