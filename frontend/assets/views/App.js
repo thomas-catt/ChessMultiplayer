@@ -84,7 +84,7 @@ export default function App(props) {
 					<Appbar.Action icon="chess-queen" />
 					<View>
 						<View style={{display: 'flex', flexDirection: "column"}}>
-							<Text variant='titleMedium'>ChessMultiplayer</Text>
+							<Text variant='titleMedium'>Chessable</Text>
 							<View style={{flexDirection: "row"}}>
 								<Text style={{color: "#88888888", fontSize: 12}}>Authenticated as </Text>
 								<Text style={{fontSize: 12}}>{appContext.clientName}.</Text>

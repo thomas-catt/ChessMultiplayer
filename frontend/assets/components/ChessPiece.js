@@ -90,7 +90,7 @@ export default function ChessPiece(props) {
             disabled={held}
             style={{
                 // position: "absolute",
-                zIndex: props.z,
+                zIndex: held ? 1 : -1,
             }}
             >
         <View style={{
