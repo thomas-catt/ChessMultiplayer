@@ -171,7 +171,6 @@ const ChessPieces = (props) => {
 export default function Home(props) {
     const { appContext } = props.context
     const [piecesLoaded, setPiecesLoaded] = useState(false)
-    const [boardFlipped, setBoardFlipped] = useState(false)
 
     const theme = appContext.themes.current()
 
@@ -187,9 +186,9 @@ export default function Home(props) {
         // borderWidth: 1,
         // borderColor: "green"
     }}>
-        <View style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
-            <Button mode='outlined' onPress={() => setBoardFlipped(!boardFlipped)} icon="flip-vertical">Flip Board</Button>
-        </View>
+        {/* <View style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
+            <Button mode='outlined' onPress={() => appContext.setBoardFlipped(!appContext.boardFlipped)} icon="flip-vertical">Flip Board</Button>
+        </View> */}
         {<View style={{
             backgroundColor: theme.colors.elevation.level1,
             width: chessBoardSize+(chessBoardPadding*2),
@@ -200,7 +199,7 @@ export default function Home(props) {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            transform: [{rotate: boardFlipped ? '180deg' : '0deg'}],
+            transform: [{rotate: appContext.boardFlipped ? '180deg' : '0deg'}],
             borderRadius: 10,
         }}>
             <Image source={require('../images/ChessBoard.png')} style={{
@@ -209,7 +208,7 @@ export default function Home(props) {
                 borderRadius: 10,
                 zIndex: -1,
             }} />
-            <ChessPieces flipped={boardFlipped} context={{appContext}} setPiecesLoaded={setPiecesLoaded}/>
+            <ChessPieces flipped={appContext.boardFlipped} context={{appContext}} setPiecesLoaded={setPiecesLoaded}/>
         </View>}
     </View>
 }

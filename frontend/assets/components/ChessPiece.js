@@ -96,14 +96,14 @@ export default function ChessPiece(props) {
         <View style={{
             display: "flex",
             flexDirection: "row",
-            alignItems: "center"
+            alignItems: "center",
         }}>
             <Avatar.Icon
                 size={props.size}
                 icon={"chess-"+props.name}
                 color={{white: "#ffffff", black: "#000000"}[props.side]}
                 style={{
-                    backgroundColor: held ? clientColor+"44" : (pressed ? "#88888833" : "#00000000"),
+                    backgroundColor: held ? clientColor+"44" : (pressed ? clientColor+"33" : "#00000000"),
                     transform: [{rotate: props.flipped ? '180deg' : '0deg'}],
                     borderWidth: 1,
                     borderRadius: 0,
@@ -115,13 +115,14 @@ export default function ChessPiece(props) {
                 paddingVertical: 2,
                 marginHorizontal: 6,
                 borderRadius: 100,
+                transform: [{rotate: props.flipped ? '180deg' : '0deg'}],
                 color: clientColor,
                 backgroundColor: clientColor+"44",
                 borderColor: clientColor,
                 borderWidth: 1,
                 fontWeight: "bold",
                 textAlign: "center"
-            }}>{held}</Text> : <></>}            
+            }} variant='labelMedium'>{held}</Text> : <></>}            
         </View>
     </Draggable>
     )

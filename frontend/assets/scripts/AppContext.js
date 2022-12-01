@@ -63,6 +63,7 @@ function AppContextProvider(props) {
         {id: 'Queen9', side: 'black', name: "queen"},
     ]
     const [piecesLocations, setPiecesLocations] = useState(false)
+	const [boardFlipped, setBoardFlipped] = useState(false)
 	const [darkTheme, setDarkTheme] = useState(true)
     const themes = {
         // Set status bar color in these themes
@@ -91,6 +92,7 @@ function AppContextProvider(props) {
         messagesList,
         constPiecesData,
         piecesLocations, setPiecesLocations,
+        boardFlipped, setBoardFlipped,
         darkTheme, setDarkTheme,
         themes
     }}>
