@@ -5,7 +5,7 @@ _Formerly known as ChessMultiplayer._
 
 Basically the most _“Manual”_ online chess yet.
 
-# Running the app:
+## Running the app:
 The app runs with two instances. A server and a client.
 - ### The Server:
 The root folder is the frontend, clone this repo and do:
@@ -33,5 +33,5 @@ const socketUrl = "http://[SERVER IP]:4000/"
 ...
 ```
 
-# Contribution:
+## Contribution:
 Please don't. This is my solo project, let me have my fun.
