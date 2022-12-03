@@ -1,9 +1,10 @@
 import Draggable from 'react-native-draggable';
 
 const { useState } = require('react');
-const { StyleSheet, Text, View, Pressable, Dimensions, ShadowPropTypesIOS } = require('react-native');
-const { Button, Avatar } = require('react-native-paper');
+const { Text, View, Dimensions } = require('react-native');
+const { Avatar } = require('react-native-paper');
 import { broadcastChessPieceDrag, onChessPieceDragReceived } from '../scripts/Socket'
+import { getClientColor } from '../scripts/Constants'
 
 let broadcastCooldownReady = true
 
@@ -12,6 +13,7 @@ export default function ChessPiece(props) {
     const [pressed, setPressed] = useState(false)
     const [held, setHeld] = useState(false)
     const [position, setPosition] = useState(props.position)
+    const [clientId, setClientId] = useState(false)
 
     onChessPieceDragReceived(props.id, (piece) => {
         if (piece.clientId != props.clientId) {
@@ -25,7 +27,7 @@ export default function ChessPiece(props) {
                 setPosition(receivedCoords)
                 if (!held) setHeld(piece.clientName)
             }
-
+            setClientId(piece.clientId)
         }
     })
 
@@ -57,7 +59,8 @@ export default function ChessPiece(props) {
         }
     }
 
-    const clientColor = "#88ff88"
+    const clientColor = getClientColor(held ? clientId : false)[0]
+    const clientColorBg = getClientColor(held ? clientId : false)[1]
     
     return (
     <Draggable
@@ -103,11 +106,11 @@ export default function ChessPiece(props) {
                 icon={"chess-"+props.name}
                 color={{white: "#ffffff", black: "#000000"}[props.side]}
                 style={{
-                    backgroundColor: held ? clientColor+"44" : (pressed ? clientColor+"33" : "#00000000"),
+                    backgroundColor: held ? clientColor+"cc" : (pressed ? clientColor+"cc" : "#00000000"),
                     transform: [{rotate: props.flipped ? '180deg' : '0deg'}],
                     borderWidth: 1,
                     borderRadius: 0,
-                    borderColor: pressed ? "#88888866" : "#00000000",
+                    borderColor: pressed ? clientColor : "#00000000",
                 }}
             />
             {held ? <Text style={{fontSize: 12,
@@ -117,7 +120,7 @@ export default function ChessPiece(props) {
                 borderRadius: 100,
                 transform: [{rotate: props.flipped ? '180deg' : '0deg'}],
                 color: clientColor,
-                backgroundColor: clientColor+"44",
+                backgroundColor: clientColorBg+"cc",
                 borderColor: clientColor,
                 borderWidth: 1,
                 fontWeight: "bold",

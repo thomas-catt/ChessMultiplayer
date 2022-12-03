@@ -1,18 +1,23 @@
 import { io } from 'socket.io-client';
-const socketUrl = "http://192.168.1.9:4000/"
+const socketUrl = "http://192.168.1.69:4000/"
 
 let socket = false
 let currentCallbacks = []
 const connectSocketIO = ({ onConnect, introduction, onFailure, onDisconnect }) => {
-	if (!socket) {
-        socket = io(socketUrl)
-        socket.emit('introduction', introduction)
-    }
-	
-	socket.on('connect', onConnect)
-	socket.on('reconnect_failed', onFailure)
-	socket.on('disconnect', onDisconnect)
+    try {
+        if (!socket) {
+            socket = io(socketUrl)
+            socket.emit('introduction', introduction)
+        }
+        
+        socket.on('connect', onConnect)
+        socket.on('reconnect_failed', onFailure)
+        socket.on('disconnect', onDisconnect)
 
+    } catch (err) {
+        console.log(err)
+        return onFailure()
+    }
 }
 
 // Users.js:

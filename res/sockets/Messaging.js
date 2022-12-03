@@ -10,7 +10,7 @@ const MessageReceived = (socket, io) => {
 // Emit: THE RECEIVED MESSAGE
 
 const EmitReceivedMessage = (io, messageObject) => {
-    socketLog(`${messageObject.fullname}: `.green.bold, messageObject.message.white)
+    socketLog(`${messageObject.clientName}: `.green.bold, messageObject.message.white)
     io.sockets.emit('text-message', messageObject)
 }
 

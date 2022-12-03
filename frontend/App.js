@@ -7,17 +7,14 @@ import { Provider as PaperProvider } from 'react-native-paper';
 
 function AppContainer() {
 	const appContext = useContext(AppContext)
-	const { darkTheme, setDarkTheme } = appContext
-	const [ paperDarkTheme, setPaperDarkTheme ] = useState(darkTheme)
 
 	function onThemeToggle() {
-		setDarkTheme(!darkTheme)
-		setPaperDarkTheme(!paperDarkTheme)
+		appContext.setDarkTheme(!appContext.darkTheme)
 	}
 	
 	let theme = appContext.themes.current()
 	return <PaperProvider theme={theme}>
-		<App context={{appContext, AppContextProvider}} darkTheme={darkTheme} changeTheme={onThemeToggle}/>
+		<App context={{appContext, AppContextProvider}} darkTheme={appContext.darkTheme} changeTheme={onThemeToggle}/>
 	</PaperProvider>
 }
 

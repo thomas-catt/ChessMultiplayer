@@ -3,6 +3,7 @@ import { ScrollView, View } from 'react-native';
 import { createRef, useContext, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid'
 import { broadcastTextMessage, onTextMessageReceive } from '../scripts/Socket'
+import { getClientColor } from '../scripts/Constants';
 
 function MessagesListView(props) {
 	const { appContext } = props.context
@@ -11,11 +12,11 @@ function MessagesListView(props) {
     const theme = appContext.themes.current()
 
     onTextMessageReceive((m) => {
-        if ((m.userId === appContext.clientId)) {
+        if ((m.clientId === appContext.clientId)) {
             appContext.messagesList = appContext.messagesList.map(a => a.id === m.id ? {...a, sent: true, own: true} : {...a})
             // console.log("Confirmed own message:", m.message)
         } else {
-            const newMsg = {...m, sent: true, own: m.userId === appContext.clientId}
+            const newMsg = {...m, sent: true, own: m.clientId === appContext.clientId}
             appContext.messagesList = [newMsg, ...appContext.messagesList]
         }
 
@@ -29,6 +30,7 @@ function MessagesListView(props) {
     {
         appContext.messagesList.map(message => { 
             let messageTime = new Date(message.timestamp)
+            let clientColor = getClientColor(message.clientId)
             messageTime = {
                 hours: (messageTime.getHours() > 12 ? messageTime.getHours() - 12 : messageTime.getHours()),
                 minutes: messageTime.getMinutes(),
@@ -44,12 +46,13 @@ function MessagesListView(props) {
             <List.Item
                 style={{opacity: message.sent ? 1 : 0.5}}
                 key={message.id}
-                title={message.fullname}
+                title={message.clientName}
+                titleStyle={message.own ? {color: clientColor[0]} : {}}
                 description={message.message + " - [" + messageTime + "]"}
                 left={() => <List.Icon
-                    style={{borderRadius: 100, backgroundColor: message.own ? theme.colors.primary : ""}}
-                    icon={"message"}
-                    color={message.own ? theme.colors.surface : theme.colors.inverseSurface} />}
+                    style={{borderRadius: 100, backgroundColor: message.own ? clientColor[1] : clientColor[0], borderWidth: 1, borderColor: clientColor[0]}}
+                    icon={"account"}
+                    color={message.own ? clientColor[0] : clientColor[1]} />}
             />
         )})
     }
@@ -66,8 +69,8 @@ export default function Messaging(props) {
         let preparedMessage = {
             id: uuidv4(),
             message: textMessage,
-            fullname: appContext.clientName,
-            userId: appContext.clientId,
+            clientName: appContext.clientName,
+            clientId: appContext.clientId,
             timestamp: new Date().getTime(),
             timezoneOffset: new Date().getTimezoneOffset()
         }
