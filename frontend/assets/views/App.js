@@ -12,12 +12,14 @@ import { connectSocketIO, onTextMessageReceive, onUsersCountReceive } from '../s
 
 const UsersCounter = (props) => {
 	const appContext = props.appContext
-	const [usersCount, setUsersCount] = useState("Waiting...")
-	onUsersCountReceive((newUsersCount) => {
-		setUsersCount(newUsersCount)
-	})
 
-	return <Button textColor={appContext.darkTheme ? "#80e27e" : "#087f23"} icon="account">{usersCount}</Button>
+	return <Button textColor={appContext.darkTheme ? "#80e27e" : "#087f23"} icon="account">{props.users}</Button>
+}
+
+const NewUserSnackbar = ({visible, name, hide}) => {
+    return <Snackbar duration={2500} visible={visible} onDismiss={hide} action={{label:"Dismiss"}}>
+		{name !== '0' ? `"${name}" has joined!` : "A user disconnected :("}
+    </Snackbar>
 }
 
 const MessagesListener = (props) => {
@@ -61,6 +63,8 @@ const ClientNameDialog = (props) => {
 		appContext.setClientName(clientNameInput.trim())
 		appContext.setShowUpdateUsernameDialog(false)
 		if (props.firstTime) props.confirm()
+		// setClientNameInput(appContext.clientName)
+		setError("")
 	}
 	
     const theme = appContext.themes.current()
@@ -101,6 +105,8 @@ export default function App(props) {
 
 
 	const [loading, setLoading] = useState(appContext.showUpdateUsernameDialog ? 'fail' : 'ready')
+	const [usersCount, setUsersCount] = useState("Waiting...")
+	const [newUserSnackbar, setNewUserSnackbar] = useState(false)
 
 	if (loading == 'ready') {
 		setLoading("loading")
@@ -112,6 +118,13 @@ export default function App(props) {
 			introduction: appContext.clientName,
 			onFailure: () => setLoading('fail'),
 			onDisconnect: () => setLoading('false')
+		})
+	}
+
+	if (loading == 'connected') {
+		onUsersCountReceive(({users, name}) => {
+			setUsersCount(users)
+			setNewUserSnackbar(name)
 		})
 	}
 	    
@@ -137,7 +150,7 @@ export default function App(props) {
 					{
 						{
 							loading:<Button></Button>,
-							connected:<><UsersCounter appContext={appContext}/></>,
+							connected:<><UsersCounter users={usersCount} appContext={appContext}/></>,
 							fail:<Button></Button>,
 							false:<Button textColor={theme.colors.error}>Failed to connect, server offline.</Button>,
 						}[loading]
@@ -157,6 +170,7 @@ export default function App(props) {
 					}} show={appContext.showUpdateUsernameDialog}/>
 				</Portal>
 				{(routes[index].key == "messaging" || loading !== "connected") ? <></> : <MessagesListener appContext={appContext}/>}
+				{newUserSnackbar != appContext.clientName && <NewUserSnackbar visible={newUserSnackbar} name={newUserSnackbar} hide={() => setNewUserSnackbar(false)} />}
 			</AppContextProvider>
 	);
 }

@@ -11,6 +11,7 @@ let broadcastCooldownReady = true
 export default function ChessPiece(props) {
     const windowDimensions = Dimensions.get('window')
     const [pressed, setPressed] = useState(false)
+    const [broadcastReady, setBroadcastReady] = useState(true)
     const [held, setHeld] = useState(false)
     const [position, setPosition] = useState(props.position)
     const [clientId, setClientId] = useState(false)
@@ -19,6 +20,8 @@ export default function ChessPiece(props) {
         if (piece.clientId != props.clientId) {
             if (piece.phase == "release") {
                 props.setPiecesLocations({...props.piecesLocations, [props.id]: props.coordinatesPercentageConversion({coordinates: position})})
+                const receivedCoords = props.coordinatesPercentageConversion({percentage: piece.position})
+                setPosition(receivedCoords)
                 setHeld(false)
             } else if (piece.phase == "press") {
                 setHeld(piece.clientName)
@@ -32,6 +35,8 @@ export default function ChessPiece(props) {
     })
 
     const broadcastChessPieceInput = (event, phase) => {
+        // if (!broadcastReady || phase !== "release") return setBroadcastReady(true)
+        
         let positionToSend = props.convertToUsableDragInput(event)
         if (props.flipped) {
             positionToSend = props.getFlippedPercentages(positionToSend)
@@ -47,6 +52,11 @@ export default function ChessPiece(props) {
             phase: phase,
             position: positionToSend
         })
+
+        setBroadcastReady(false)
+        setTimeout(() => {
+            setBroadcastReady(true)
+        }, 500);
     }
     
     const onPieceDrag = (event) => {
@@ -66,6 +76,7 @@ export default function ChessPiece(props) {
     <Draggable
             x={position[0]-(props.size/2)}
             y={position[1]-(props.size/2)}
+            z={held || pressed ? 1000 : 0}
             onPressIn={(event) => {
                 if (held) return
                 // props.press(props.id)

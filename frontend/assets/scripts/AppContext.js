@@ -16,7 +16,7 @@ function AppContextProvider(props) {
 	const [boardFlipped, setBoardFlipped] = useState(false)
 	const [themePreference, setThemePreference] = useState("S")
 	const [notifyMessages, setNotifyMessages] = useState(true)
-	const [showUpdateUsernameDialog, setShowUpdateUsernameDialog] = useState(true)
+	const [showUpdateUsernameDialog, setShowUpdateUsernameDialog] = useState(false)
     const [darkTheme, setDarkTheme] = useState(false)
     
     useEffect(() => {

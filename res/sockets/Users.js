@@ -8,7 +8,7 @@ let usersCount
 // On: CONNECTION
 const UserConnected = (socket, io) => {
     socket.on('introduction', (clientName) => {
-        EmitConnectedUsers(io, true, "\"" + clientName + "\"")
+        EmitConnectedUsers(io, true, clientName)
         EmitBoardLayout(io)
     })
     socket.on('disconnect', () => {
@@ -21,8 +21,8 @@ const UserConnected = (socket, io) => {
 
 const EmitConnectedUsers = (io, connect, lastConnected) => {
     usersCount = io.engine.clientsCount
-    io.sockets.emit('connected-users', usersCount)
-    socketLog("Connected Users: ", usersCount, `(${connect ? "+" : ""}${lastConnected})`[connect ? "green" : "red"].bold)
+    io.sockets.emit('connected-users', {users: usersCount, name: connect ? lastConnected : '0'})
+    socketLog("Connected Users: ", usersCount, `(${connect ? "+" : ""}"${lastConnected}")`[connect ? "green" : "red"].bold)
 }
 
 module.exports = {
