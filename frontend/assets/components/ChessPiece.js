@@ -35,7 +35,9 @@ export default function ChessPiece(props) {
     })
 
     const broadcastChessPieceInput = (event, phase) => {
-        // if (!broadcastReady || phase !== "release") return setBroadcastReady(true)
+        if (!broadcastReady) {
+            if (phase !== "release") return
+        }
         
         let positionToSend = props.convertToUsableDragInput(event)
         if (props.flipped) {
@@ -53,10 +55,10 @@ export default function ChessPiece(props) {
             position: positionToSend
         })
 
-        setBroadcastReady(false)
-        setTimeout(() => {
-            setBroadcastReady(true)
-        }, 500);
+        // setBroadcastReady(false)
+        // setTimeout(() => {
+        //     setBroadcastReady(true)
+        // }, 20);
     }
     
     const onPieceDrag = (event) => {
@@ -69,8 +71,8 @@ export default function ChessPiece(props) {
         }
     }
 
-    const clientColor = getClientColor(held ? clientId : false)[0]
-    const clientColorBg = getClientColor(held ? clientId : false)[1]
+    const clientColor = getClientColor(held ? clientId : false)[props.darkTheme][0]
+    const clientColorBg = getClientColor(held ? clientId : false)[props.darkTheme][1]
     
     return (
     <Draggable

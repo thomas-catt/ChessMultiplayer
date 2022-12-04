@@ -63,7 +63,6 @@ function AppContextProvider(props) {
         showUpdateUsernameDialog, setShowUpdateUsernameDialog,
         darkTheme, setDarkTheme,
         themes,
-        getClientColor
     }}>
         {props.children}
     </AppContext.Provider>

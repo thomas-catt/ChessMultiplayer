@@ -23,10 +23,10 @@ const connectSocketIO = ({ onConnect, introduction, onFailure, onDisconnect }) =
 // Users.js:
 
 const onUsersCountReceive = (callback) => {
-    if (currentCallbacks.includes('connected-users')) {
-        socket.off('connected-users')
-        currentCallbacks = currentCallbacks.filter(a => a.name != 'connected-users')  
-    }
+    // if (currentCallbacks.includes('connected-users')) {
+    //     socket.off('connected-users')
+    //     currentCallbacks = currentCallbacks.filter(a => a.name != 'connected-users')  
+    // }
     
     socket.on('connected-users', callback)
     currentCallbacks.push('connected-users')

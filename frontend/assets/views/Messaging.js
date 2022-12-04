@@ -30,7 +30,7 @@ function MessagesListView(props) {
     {
         appContext.messagesList.map(message => { 
             let messageTime = new Date(message.timestamp)
-            let clientColor = getClientColor(message.clientId)
+            let clientColor = getClientColor(message.clientId)[appContext.darkTheme]
             messageTime = {
                 hours: (messageTime.getHours() > 12 ? messageTime.getHours() - 12 : messageTime.getHours()),
                 minutes: messageTime.getMinutes(),

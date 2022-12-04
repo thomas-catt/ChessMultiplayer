@@ -56,17 +56,18 @@ const piecesData = [
 ]
 
 const clientAccentColors = [
-    ["#ffff44", "#666600", "Yellow"],
-    ["#ff9944", "#442200", "Orange"],
-    ["#db760b", "#422a00", "Women ☕"],
-    ["#ff6666", "#440000", "Red"],
+    ["#ffff44", "#666600", "#87874c", "Yellow"],
+    // ["#ffff44", "#666600", "#87874c", "Yellow"],
+    ["#fc7703", "#442200", "#8a653f", "Orange"],
+    ["#a37e50", "#422a00", "#8a653f", "Women ☕"],
+    ["#ff6666", "#440000", "#c95d5d", "Red"],
 
-    ["#ff44ff", "#440044", "Pink"],
-    ["#9944ff", "#220044", "Purple"],
-    ["#6666ff", "#000044", "Blue"],
-    ["#44ffff", "#006666", "Cyan"],
+    ["#ff44ff", "#440044", "#cf9dcf", "Pink"],
+    ["#9944ff", "#220044", "#a685c7", "Purple"],
+    ["#6666ff", "#000044", "#7575c7", "Blue"],
+    ["#44ffff", "#006666", "#91cccc", "Cyan"],
 
-    ["#44ff44", "#004400", "Green"],
+    ["#44ff44", "#004400", "#6fbd6f", "Green"],
 ]
 
 let cachedClientColors = {}
@@ -75,7 +76,7 @@ const getClientColor = (id) => {
     if (!id) id = clientId
 
     if (cachedClientColors[id]) {
-        // console.log('Found cached clientColor:', cachedClientColors[id])
+        console.log('Found cached clientColor:', cachedClientColors[id])
         return cachedClientColors[id]
     }
     // let id = "c5c3739a-9097-43cc-820a-0eda42835001"
@@ -87,10 +88,10 @@ const getClientColor = (id) => {
         idNumbers = [...(""+idNumbersSum)].map(a => parseInt(a))
         
     } while (idNumbersSum > 9)
-
+    
     const colorToSend = clientAccentColors[idNumbersSum-1]
-    cachedClientColors[id] = colorToSend
-    return colorToSend
+    cachedClientColors[id] = {true:[colorToSend[0], colorToSend[1], colorToSend[3]], false:[colorToSend[1], colorToSend[0], colorToSend[3]]}
+    return cachedClientColors[id]
 }
 
 export {

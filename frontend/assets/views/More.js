@@ -19,7 +19,7 @@ export default function More(props) {
         appContext.setThemePreference(themePreference)
     }
 
-    const clientColor = getClientColor()
+    const clientColor = getClientColor()[appContext.darkTheme]
 
     return <ScrollView contentContainerStyle={{padding: 24}}>
         <Text variant='displaySmall' style={{marginTop: 70, marginBottom: 30}}>Settings</Text>
@@ -83,12 +83,9 @@ export default function More(props) {
             <Chip style={{backgroundColor: clientColor[1], borderWidth: 1, borderRadius: 100, borderColor: clientColor[0]}} textStyle={{color: clientColor[0]}}>{clientColor[2]}</Chip>
         </View>
 
-        <View style={{marginTop: 100, opacity: 0.5, display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
-            <Avatar.Icon icon="chess-queen" style={{backgroundColor: "#00000000"}} color={"#ffffff"} size={48}/>
-            <View>
-                <Text variant="headlineSmall">{appContext.metadata.name} v{appContext.metadata.version}</Text>
-                <Text>By {appContext.metadata.author}</Text>
-            </View>
+        <View style={{marginTop: 100, opacity: 0.5, display: "flex", justifyContent: "center", alignItems: "center"}}>
+            <Text variant="bodyMedium">{appContext.metadata.name}</Text>
+            <Text>v{appContext.metadata.version} – {appContext.metadata.author}</Text>
         </View>
     </ScrollView>
 }

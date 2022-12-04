@@ -1,8 +1,10 @@
 # Required fixes:
 These are some bugs I need to fix:
-- **Piece drag lag:** The more inputs, the laggier. Probably will have to cap the amount of drag emits rather than throwing out every drag callback.
-- **Light mode accent colors:** Not made yet, probably just needs new background colors. Current accent colors don't match light mode.
-- **Piece Username Label:** Appears on the oppposite side when the board is flipped. Small issue, but needs a bigger redesign.
+
+> ***[LOW PRIORITY] Piece Username Label:** Appears on the oppposite side when the board is flipped. Small issue, but needs a bigger redesign.*
+
+<!-- - **Piece drag lag:** The more inputs, the laggier. Probably will have to cap the amount of drag emits rather than throwing out every drag callback. -->
+<!-- - **Light mode accent colors:** Not made yet, probably just needs new background colors. Current accent colors don't match light mode. -->
 
 ---
 

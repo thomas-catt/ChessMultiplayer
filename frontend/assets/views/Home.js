@@ -75,6 +75,7 @@ const ChessPieces = (props) => {
                         clientName={appContext.clientName}
                         name={pieceToRender.name}
                         side={pieceToRender.side}
+                        darkTheme={appContext.darkTheme}
                         z={-1}
                         size={pieceSize}
                         flipped={props.flipped}
