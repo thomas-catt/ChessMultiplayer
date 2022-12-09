@@ -19,6 +19,10 @@ export default function More(props) {
         appContext.setThemePreference(themePreference)
     }
 
+    // const saveSetting = (key, value) => {
+        
+    // }
+
     const clientColor = getClientColor()[appContext.darkTheme]
 
     return <ScrollView contentContainerStyle={{padding: 24}}>

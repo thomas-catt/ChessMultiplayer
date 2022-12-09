@@ -3,28 +3,77 @@ import { MD3LightTheme, MD3DarkTheme } from 'react-native-paper';
 import { expo } from '../../app.json';
 import { piecesData as constPiecesData, clientId, clientIdShort, getClientColor } from './Constants'
 import { Appearance, Platform } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const AppContext = createContext()
 
+let defaultValues = {
+    firstTime: null,
+    clientName: Platform.select({android: "AndroidClient", ios: "iOSClient", default: "WebClient"}) + " " + clientIdShort,
+    clientId: clientId,
+    boardFlipped: false,
+    themePreference: "S",
+    notifyMessages: true,
+}
+
 function AppContextProvider(props) {
+    async function init() {
+        let storedClientId = false
+        try {
+            storedClientId = await AsyncStorage.getItem("@clientId")
+        } catch (e) {
+            console.error(e)
+        }
+        if (storedClientId) {
+            if (defaultValues.firstTime == null) defaultValues.firstTime = false
+            defaultValues.clientId = storedClientId
+            defaultValues.clientName = await AsyncStorage.getItem("@clientName")
+            defaultValues.boardFlipped = await AsyncStorage.getItem("@boardFlipped")
+            defaultValues.themePreference = await AsyncStorage.getItem("@themePreference")
+            defaultValues.notifyMessages = await AsyncStorage.getItem("@notifyMessages")
+            console.log("Not first time 💀", storedClientId)
+
+            setClientName(defaultValues.clientName)
+            setBoardFlipped(defaultValues.boardFlipped)
+            setThemePreference(defaultValues.themePreference)
+            setNotifyMessages(defaultValues.notifyMessages)
+        } else {
+            defaultValues.firstTime = true
+            await AsyncStorage.setItem("@clientId", defaultValues.clientId)
+            await AsyncStorage.setItem("@clientName", defaultValues.clientName)
+            await AsyncStorage.setItem("@boardFlipped", defaultValues.boardFlipped)
+            await AsyncStorage.setItem("@themePreference", defaultValues.themePreference)
+            await AsyncStorage.setItem("@notifyMessages", defaultValues.notifyMessages)
+            setShowUpdateUsernameDialog(true)
+            console.log("First Time 🤨")
+        }
+
+
+    }
+    init()
+
     const [_update, update] = useState();
     const metadata = expo
-    const [clientName, setClientName] = useState(Platform.select({android: "AndroidClient", ios: "iOSClient", default: "WebClient"}) + " " + clientIdShort)
+    const [clientName, setClientName] = useState(defaultValues.clientName)
     let messagesList = []
     const [piecesLocations, setPiecesLocations] = useState(false)
 	const [socketReady, setSocketReady] = useState(false)
-	const [boardFlipped, setBoardFlipped] = useState(false)
-	const [themePreference, setThemePreference] = useState("S")
-	const [notifyMessages, setNotifyMessages] = useState(true)
+	const [boardFlipped, setBoardFlipped] = useState(defaultValues.boardFlipped)
+	const [themePreference, setThemePreference] = useState(defaultValues.themePreference)
+	const [notifyMessages, setNotifyMessages] = useState(defaultValues.notifyMessages)
 	const [showUpdateUsernameDialog, setShowUpdateUsernameDialog] = useState(false)
     const [darkTheme, setDarkTheme] = useState(false)
-    
+
     useEffect(() => {
         if (themePreference == "S")
             setDarkTheme(Appearance.getColorScheme() == 'dark')
         else
             setDarkTheme(themePreference == "D")
     }, [themePreference])
+
+    const saveItem = (key, value) => {
+        AsyncStorage.mergeItem("@" + key, value)
+    }
 
     
     
@@ -50,7 +99,7 @@ function AppContextProvider(props) {
     return <AppContext.Provider value={{
         update,
         metadata,
-        clientId,
+        clientId: defaultValues.clientId,
         clientIdShort,
         clientName, setClientName,
         messagesList,
@@ -63,6 +112,7 @@ function AppContextProvider(props) {
         showUpdateUsernameDialog, setShowUpdateUsernameDialog,
         darkTheme, setDarkTheme,
         themes,
+        saveItem,
     }}>
         {props.children}
     </AppContext.Provider>
