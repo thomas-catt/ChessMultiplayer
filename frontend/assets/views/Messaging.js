@@ -46,11 +46,11 @@ function MessagesListView(props) {
             <List.Item
                 style={{opacity: message.sent ? 1 : 0.5}}
                 key={message.id}
-                title={message.clientName}
+                title={message.clientName + " - [" + messageTime + "]"}
                 titleStyle={message.own ? {color: clientColor[0]} : {}}
-                description={message.message + " - [" + messageTime + "]"}
+                description={message.message}
                 left={() => <List.Icon
-                    style={{borderRadius: 100, backgroundColor: message.own ? clientColor[1] : clientColor[0], borderWidth: 1, borderColor: clientColor[0]}}
+                    style={{borderRadius: 100, backgroundColor: message.own ? "#00000000" : clientColor[0], borderWidth: 1, borderColor: message.own ? "#00000000" : clientColor[0]}}
                     icon={"account"}
                     color={message.own ? clientColor[0] : clientColor[1]} />}
             />
@@ -66,6 +66,8 @@ export default function Messaging(props) {
     const [textMessage, setTextMessage] = useState("")
 
     const onSubmitTextMessage = () => {
+        if (textMessage.trim() == "") return
+        
         let preparedMessage = {
             id: uuidv4(),
             message: textMessage,

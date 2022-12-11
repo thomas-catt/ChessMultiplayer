@@ -42,7 +42,6 @@ const MessagesListener = (props) => {
         const newMsg = {...m, sent: true, own: m.userId === appContext.clientId}
         appContext.messagesList = [newMsg, ...appContext.messagesList]
 		if (appContext.notifyMessages) {
-			appContext.update()
 			setMessage(m.clientName+": " + m.message)
 			setVisible(true)
 		}
@@ -71,6 +70,7 @@ const ClientNameDialog = (props) => {
 		}
 
 		appContext.setClientName(clientNameInput.trim())
+		appContext.saveItem('clientName', clientNameInput.trim())
 		appContext.setShowUpdateUsernameDialog(false)
 		if (props.firstTime) props.confirm()
 		// setClientNameInput(appContext.clientName)
@@ -113,10 +113,15 @@ export default function App(props) {
 		more: MoreContainer,
 	})
 
-
+	
 	const [loading, setLoading] = useState(appContext.showUpdateUsernameDialog ? 'fail' : 'ready')
 
-	if (loading == 'ready') {
+	useEffect(() => {
+		if ((appContext.showUpdateUsernameDialog && loading == 'ready') || (!appContext.showUpdateUsernameDialog && loading == 'fail'))
+			setLoading(appContext.showUpdateUsernameDialog ? 'fail' : 'ready')
+	}, [appContext.showUpdateUsernameDialog])
+
+	if ((loading == 'ready') && appContext.saveDataLoaded) {
 		setLoading("loading")
 		connectSocketIO({
 			onConnect: () => {
@@ -129,13 +134,8 @@ export default function App(props) {
 		})
 	}
 
-	if (loading == 'connected') {
-	}
-	    
-
-
     const theme = appContext.themes.current()
-
+	
 	return (
 			<AppContextProvider>
 				<SafeAreaView/>
@@ -146,7 +146,7 @@ export default function App(props) {
 							<Text variant='titleMedium'>{appContext.metadata.name}</Text>
 							{loading == "connected" && <View style={{flexDirection: "row"}}>
 								<Text style={{color: "#88888888", fontSize: 12}}>Authenticated as </Text>
-								<Text style={{color: getClientColor()[appContext.darkTheme][appContext.darkTheme ? 0 : 1], fontSize: 12}}>{appContext.clientName}</Text>
+								<Text style={{color: getClientColor(appContext.clientId)[appContext.darkTheme][appContext.darkTheme ? 0 : 1], fontSize: 12}}>{appContext.clientName}</Text>
 							</View>}
 						</View>
 					</View>
