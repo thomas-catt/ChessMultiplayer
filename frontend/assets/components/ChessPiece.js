@@ -18,6 +18,7 @@ export default function ChessPiece(props) {
 
     onChessPieceDragReceived(props.id, (piece) => {
         if (piece.clientId != props.clientId) {
+            setClientId(piece.clientId)
             if (piece.phase == "release") {
                 props.setPiecesLocations({...props.piecesLocations, [props.id]: props.coordinatesPercentageConversion({coordinates: position})})
                 const receivedCoords = props.coordinatesPercentageConversion({percentage: piece.position})
@@ -28,9 +29,8 @@ export default function ChessPiece(props) {
             } else {
                 const receivedCoords = props.coordinatesPercentageConversion({percentage: piece.position})
                 setPosition(receivedCoords)
-                if (!held) setHeld(piece.clientName)
+                setHeld(piece.clientName)
             }
-            setClientId(piece.clientId)
         }
     })
 
@@ -71,6 +71,7 @@ export default function ChessPiece(props) {
         }
     }
 
+    
     const clientColor = getClientColor(held ? clientId : props.clientId)[props.darkTheme][0]
     const clientColorBg = getClientColor(held ? clientId : props.clientId)[props.darkTheme][1]
     

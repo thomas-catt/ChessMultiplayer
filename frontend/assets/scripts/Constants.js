@@ -57,7 +57,6 @@ const piecesData = [
 
 const clientAccentColors = [
     ["#ffff44", "#666600", "#87874c", "Yellow"],
-    // ["#ffff44", "#666600", "#87874c", "Yellow"],
     ["#fc7703", "#442200", "#8a653f", "Orange"],
     ["#a37e50", "#422a00", "#8a653f", "Women ☕"],
     ["#ff6666", "#440000", "#c95d5d", "Red"],
@@ -73,7 +72,7 @@ const clientAccentColors = [
 let cachedClientColors = {}
 
 const getClientColor = (id) => {
-    if (!id) throw "Expected getClientColor to receive clientId, got undefined"
+    if (!id) throw new Error("Expected getClientColor to receive clientId, got " + typeof id)
 
     if (cachedClientColors[id]) {
         return cachedClientColors[id]
