@@ -123,6 +123,6 @@ export default function Home(props) {
                     zIndex: -1,
                 }} />
                 <ChessPieces flipped={appContext.boardFlipped} context={{appContext}} setPiecesLoaded={setPiecesLoaded}/>
-            </View> : <Text style={{display: "flex", justifyContent: "center", alignItems: "center", height: windowDimensions.height}}>Connecting...</Text>}
+            </View> : <Text style={{display: "flex", justifyContent: "center", alignItems: "center", height: windowDimensions.height}}></Text>}
             </>
 }
