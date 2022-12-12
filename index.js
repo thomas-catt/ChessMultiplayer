@@ -1,7 +1,6 @@
 // ENV, port, and colors lib for console beauty.
 require('dotenv').config()
 const expressPort = process.env.HTTP_PORT || 80
-const ioPort = process.env.WS_PORT || 80
 require('colors')
 require('./res/sockets/io')
 
@@ -36,9 +35,9 @@ socketInit(server)
 
 
 
-// // Start
-// server.listen(expressPort, () => {
-//     console.log(`              \n`.bgGreen.black.bold +
-//                 `  Server up:  `.bgGreen.black.bold + " " + `http://localhost:${expressPort}\n`.cyan.underline +
-//                 `              `.bgGreen.black.bold + "\n")
-// })
+// Start
+server.listen(expressPort, () => {
+    console.log(`              \n`.bgGreen.black.bold +
+                `  Server up:  `.bgGreen.black.bold + " " + `:${expressPort}\n`.cyan.underline +
+                `              `.bgGreen.black.bold + "\n")
+})
