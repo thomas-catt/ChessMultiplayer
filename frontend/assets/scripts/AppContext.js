@@ -1,30 +1,97 @@
 import { useState, createContext, useEffect } from 'react';
 import { MD3LightTheme, MD3DarkTheme } from 'react-native-paper';
 import { expo } from '../../app.json';
-import { piecesData as constPiecesData, clientId, clientIdShort, getClientColor } from './Constants'
+import { piecesData as constPiecesData, constClientId, clientIdShort, getClientColor } from './Constants'
 import { Appearance, Platform } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const AppContext = createContext()
+
+let defaultValues = {
+    firstTime: null,
+    clientName: Platform.select({android: "AndroidClient", ios: "iOSClient", default: "WebClient"}) + " " + clientIdShort,
+    clientId: constClientId,
+    boardFlipped: false,
+    themePreference: "S",
+    notifyMessages: true,
+}
 
 function AppContextProvider(props) {
     const [_update, update] = useState();
     const metadata = expo
-    const [clientName, setClientName] = useState(Platform.select({android: "AndroidClient", ios: "iOSClient", default: "WebClient"}) + " " + clientIdShort)
+    const [clientId, setClientId] = useState(defaultValues.clientId)
+    const [clientName, setClientName] = useState(defaultValues.clientName)
     let messagesList = []
     const [piecesLocations, setPiecesLocations] = useState(false)
 	const [socketReady, setSocketReady] = useState(false)
-	const [boardFlipped, setBoardFlipped] = useState(false)
-	const [themePreference, setThemePreference] = useState("S")
-	const [notifyMessages, setNotifyMessages] = useState(true)
+	const [boardFlipped, setBoardFlipped] = useState(defaultValues.boardFlipped)
+	const [themePreference, setThemePreference] = useState(defaultValues.themePreference)
+	const [notifyMessages, setNotifyMessages] = useState(defaultValues.notifyMessages)
 	const [showUpdateUsernameDialog, setShowUpdateUsernameDialog] = useState(false)
     const [darkTheme, setDarkTheme] = useState(false)
-    
+    const [saveDataLoaded, setSaveDataLoaded] = useState(false)
+
     useEffect(() => {
         if (themePreference == "S")
             setDarkTheme(Appearance.getColorScheme() == 'dark')
         else
             setDarkTheme(themePreference == "D")
+
+        console.log(clientId)
     }, [themePreference])
+
+    async function loadSavedData() {
+        let isSaveDataPresent = false
+        try {
+            isSaveDataPresent = await AsyncStorage.getItem("chessableData")
+        } catch (e) {
+            console.error(e)
+        }
+        if (isSaveDataPresent) {
+            if (defaultValues.firstTime == null) {
+                defaultValues.firstTime = false
+                const savedData = JSON.parse(await AsyncStorage.getItem("chessableData"))
+                
+                defaultValues.clientId = savedData.clientId
+                defaultValues.clientName = savedData.clientName
+                defaultValues.boardFlipped = savedData.boardFlipped
+                defaultValues.themePreference = savedData.themePreference
+                defaultValues.notifyMessages = savedData.notifyMessages
+                console.log("Not first time 💀", savedData.clientId)
+
+                setClientId(savedData.clientId)
+                setClientName(savedData.clientName)
+                setBoardFlipped(savedData.boardFlipped)
+                setThemePreference(savedData.themePreference)
+                setNotifyMessages(savedData.notifyMessages)
+            }
+        } else {
+            defaultValues.firstTime = true
+            await AsyncStorage.setItem("chessableData", JSON.stringify({
+                clientId: defaultValues.clientId,
+                clientName: defaultValues.clientName,
+                boardFlipped: defaultValues.boardFlipped,
+                themePreference: defaultValues.themePreference,
+                notifyMessages: defaultValues.notifyMessages,
+            }))
+            setClientId(defaultValues.clientId)
+            setShowUpdateUsernameDialog(true)
+            console.log("First Time 🤨")
+        }
+        setSaveDataLoaded(true)
+    }
+    if (defaultValues.firstTime === null) loadSavedData()
+
+
+    
+    const saveItem = async (key, value) => {
+        try {
+            const savedData = JSON.parse(await AsyncStorage.getItem("chessableData"))
+            AsyncStorage.mergeItem("chessableData", JSON.stringify({...savedData, [key]: value}))
+        } catch (e) {
+            console.log(e)
+        }
+    }
 
     
     
@@ -62,7 +129,9 @@ function AppContextProvider(props) {
         notifyMessages, setNotifyMessages,
         showUpdateUsernameDialog, setShowUpdateUsernameDialog,
         darkTheme, setDarkTheme,
+        saveDataLoaded,
         themes,
+        saveItem,
     }}>
         {props.children}
     </AppContext.Provider>

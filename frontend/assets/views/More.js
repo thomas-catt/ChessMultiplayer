@@ -17,35 +17,49 @@ export default function More(props) {
     const dismissAppThemeChangeDialog = () => {
         setAppThemeChangeDialog(false)
         appContext.setThemePreference(themePreference)
+        appContext.saveItem("themePreference", themePreference)
     }
 
-    const clientColor = getClientColor()[appContext.darkTheme]
+    const clientColor = getClientColor(appContext.clientId)[appContext.darkTheme]
 
     return <ScrollView contentContainerStyle={{padding: 24}}>
         <Text variant='displaySmall' style={{marginTop: 70, marginBottom: 30}}>Settings</Text>
+
+        {/* <button onClick={() => alert("Color: " + getClientColor(prompt("Enter clientId:", appContext.clientId)).true[2])}>Color</button> */}
 
         <SettingTile
             title="App Theme"
             description={{L: "Light", D: "Dark", S: "System"}[appContext.themePreference] || "?"}
             icon="brightness-6"
-            onPress={() => setAppThemeChangeDialog(true)}/>
+            onPress={() => {setAppThemeChangeDialog(true)}}/>
             
         <SettingTile
             title="Flip Board"
             description={"Flip the Chess Board direction vertically"} icon="flip-vertical"
             right={() => <Switch style={{margin: 20}} value={appContext.boardFlipped}/>}
-            onPress={() => appContext.setBoardFlipped(!appContext.boardFlipped)} />
+            onPress={() => {
+                appContext.saveItem("boardFlipped", !appContext.boardFlipped)
+                appContext.setBoardFlipped(!appContext.boardFlipped)
+            }} />
             
         <SettingTile
             title="Show Chat Messages"
             description={"Show a notification at the bottom when a new message is received"} icon="message-alert"
             right={() => <Switch style={{margin: 20}} value={appContext.notifyMessages}/>}
-            onPress={() => appContext.setNotifyMessages(!appContext.notifyMessages)} />
+            onPress={() => {
+                appContext.saveItem("notifyMessages", !appContext.notifyMessages)
+                appContext.setNotifyMessages(!appContext.notifyMessages)
+            }} />
             
         <SettingTile
             title="Change name"
             description={"You can update your name here"}
             onPress={() => appContext.setShowUpdateUsernameDialog(true)} icon="open-in-new"/>
+            
+        <SettingTile
+            title="Update App UI"
+            description={"Try this if some things seem out of place"}
+            onPress={() => appContext.update(Math.random())} icon="reload"/>
 
         <Portal>
             <Dialog visible={appThemeChangeDialog} onDismiss={dismissAppThemeChangeDialog}>

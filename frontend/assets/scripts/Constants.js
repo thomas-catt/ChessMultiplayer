@@ -1,8 +1,8 @@
 import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid'
 
-const clientId = uuidv4()
-const clientIdShort = clientId.substring(0, 4).toUpperCase()
+const constClientId = uuidv4()
+const clientIdShort = constClientId.substring(0, 4).toUpperCase()
 
 const piecesData = [
     {id: "Pawn1", side: "white", name: "pawn"},
@@ -73,10 +73,9 @@ const clientAccentColors = [
 let cachedClientColors = {}
 
 const getClientColor = (id) => {
-    if (!id) id = clientId
+    if (!id) throw "Expected getClientColor to receive clientId, got undefined"
 
     if (cachedClientColors[id]) {
-        console.log('Found cached clientColor:', cachedClientColors[id])
         return cachedClientColors[id]
     }
     // let id = "c5c3739a-9097-43cc-820a-0eda42835001"
@@ -95,7 +94,7 @@ const getClientColor = (id) => {
 }
 
 export {
-    clientId,
+    constClientId,
     clientIdShort,
     piecesData,
     clientAccentColors,

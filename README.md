@@ -1,20 +1,22 @@
 # Chessable
-_Formerly known as ChessMultiplayer._
 
-~~Practicing socketio and express I guess.~~ ReactNative + SocketIO app creating a multiplayer raw chess board updating real time.
+ A multiplayer volatile raw chess board updating in real time.
+ Uses React Native and SocketIO.
 
 Basically the most _“Manual”_ online chess yet.
 
 ## Running the app:
 The app runs with two instances. A server and a client.
 - ### The Server:
-The root folder is the frontend, clone this repo and do:
+The root folder is the server, clone this repo and do:
 
 ```bash
 node index.js
 ```
 - ### The Client:
-The React Native project is located in `frontend/`:
+The React Native frontend is located in `/frontend`. It's made with expo, so to build for Android or similar, refer to expo docs.
+
+To run the app:
 
 ```bash
 cd frontend
@@ -24,11 +26,11 @@ npm run web
 npm run android
 ```
 
-To make the client be able to connect to the server, make sure to update the SocketIO IP address in `assets/scripts/Socket.js`:
+To make the client able to connect to the socket server, make sure to update the SocketIO IP address in `/frontend/assets/scripts/Socket.js`:
 
 ```javascript
 import { io } from 'socket.io-client';
-const socketUrl = "http://[SERVER IP]:4000/"
+const socketUrl = "http://[SERVER-IP]:4000/"
 
 ...
 ```

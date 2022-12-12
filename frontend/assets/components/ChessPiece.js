@@ -71,8 +71,8 @@ export default function ChessPiece(props) {
         }
     }
 
-    const clientColor = getClientColor(held ? clientId : false)[props.darkTheme][0]
-    const clientColorBg = getClientColor(held ? clientId : false)[props.darkTheme][1]
+    const clientColor = getClientColor(held ? clientId : props.clientId)[props.darkTheme][0]
+    const clientColorBg = getClientColor(held ? clientId : props.clientId)[props.darkTheme][1]
     
     return (
     <Draggable
