@@ -20,7 +20,7 @@ init = (server) => {
         PieceDragReceived(socket, io)
     })
 
-    io.listen(ioPort)
+    // io.listen(ioPort)
     socketLog(`Listening on: ${ioPort}`.green)
 }
 
