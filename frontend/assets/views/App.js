@@ -140,10 +140,10 @@ export default function App(props) {
 			<AppContextProvider>
 				<SafeAreaView/>
 				<Appbar.Header style={{marginTop: StatusBar.currentHeight}} dark={true}>
-					<Appbar.Action icon="chess-queen" />
+					<Appbar.Action icon="chess-knight" />
 					<View>
 						<View style={{display: 'flex', flexDirection: "column"}}>
-							<Text variant='titleMedium'>{appContext.metadata.name}</Text>
+							<Text variant='titleMedium'>{((loading == "loading") || (loading == "connected" && (appContext.piecesLocations === false))) ? "Connecting..." : appContext.metadata.name}</Text>
 							{loading == "connected" && <View style={{flexDirection: "row"}}>
 								<Text style={{color: "#88888888", fontSize: 12}}>Authenticated as </Text>
 								<Text style={{color: getClientColor(appContext.clientId)[appContext.darkTheme][appContext.darkTheme ? 0 : 1], fontSize: 12}}>{appContext.clientName}</Text>

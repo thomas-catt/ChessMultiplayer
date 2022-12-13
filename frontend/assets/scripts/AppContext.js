@@ -29,6 +29,7 @@ function AppContextProvider(props) {
 	const [notifyMessages, setNotifyMessages] = useState(defaultValues.notifyMessages)
 	const [showUpdateUsernameDialog, setShowUpdateUsernameDialog] = useState(false)
     const [darkTheme, setDarkTheme] = useState(false)
+    const [takingTooLong, setTakingTooLong] = useState(false)
     const [saveDataLoaded, setSaveDataLoaded] = useState(false)
 
     useEffect(() => {
@@ -129,6 +130,7 @@ function AppContextProvider(props) {
         notifyMessages, setNotifyMessages,
         showUpdateUsernameDialog, setShowUpdateUsernameDialog,
         darkTheme, setDarkTheme,
+        takingTooLong, setTakingTooLong,
         saveDataLoaded,
         themes,
         saveItem,

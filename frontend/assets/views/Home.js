@@ -1,4 +1,4 @@
-import { Button, Snackbar, Text } from 'react-native-paper';
+import { Avatar, Button, Snackbar, Text } from 'react-native-paper';
 import { Platform, StatusBar } from 'react-native';
 import { Dimensions, Image, Pressable, ScrollView, StyleSheet, Touchable, View } from 'react-native';
 import {  useState } from 'react';
@@ -101,6 +101,8 @@ export default function Home(props) {
     const { appContext } = props.context
     const [piecesLoaded, setPiecesLoaded] = useState(false)
 
+    if (!appContext.takingTooLong) setTimeout(() => appContext.setTakingTooLong(true), 2000)
+
     const theme = appContext.themes.current()
 
     return <>{appContext.socketReady ? <View style={{
@@ -123,6 +125,13 @@ export default function Home(props) {
                     zIndex: -1,
                 }} />
                 <ChessPieces flipped={appContext.boardFlipped} context={{appContext}} setPiecesLoaded={setPiecesLoaded}/>
-            </View> : <Text style={{display: "flex", justifyContent: "center", alignItems: "center", height: windowDimensions.height}}></Text>}
+            </View> : <View style={{display: "flex", justifyContent: "center", alignItems: "center", width: windowDimensions.width, height: windowDimensions.height-100, opacity: 0.6, padding: 25}}>
+                {appContext.takingTooLong && <>
+                    <Avatar.Icon size={72} icon={"weather-cloudy-clock"} color={appContext.darkTheme && "white"} style={{backgroundColor: "#ffffff00"}}/>
+                    <Text style={{paddingVertical: 20}} variant='headlineMedium'>Server is starting...</Text>
+                    <Text style={{paddingVertical: 10, textAlign: "center"}}>You're probably running this after a period of inactivity. The socket server sleeps when it finds inactivity. Wait for a few seconds for the server to start back up.</Text>
+                    <Text style={{paddingVertical: 10, textAlign: "center"}}>This will also reset the board layout.</Text>
+                </>}
+            </View>}
             </>
 }
