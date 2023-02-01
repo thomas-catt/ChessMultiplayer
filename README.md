@@ -6,7 +6,7 @@
 Basically the most _“Manual”_ online chess yet.
 
 ## Try/Download:
-- Android builds are in (releases)[https://github.com/thomas-catt/ChessMultiplayer/releases]
+- Android builds are in [releases](https://github.com/thomas-catt/ChessMultiplayer/releases)
 - The web app isn't hosted anywhere yet, running locally is your only call.
 - Didn't develop for iOS, so probably won't run
 
