@@ -1,5 +1,5 @@
 require('dotenv').config()
-const ioPort = process.env.PORT || 80
+const ioPort = process.env.WS_PORT || 80
 const { socketLog } = require('../commons')
 const { UserConnected } = require('./Users')
 const { MessageReceived } = require('./Messaging')

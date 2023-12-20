@@ -1,6 +1,6 @@
 // ENV, port, and colors lib for console beauty.
 require('dotenv').config()
-const expressPort = process.env.PORT || 80
+const expressPort = process.env.HTTP_PORT || 80
 require('colors')
 require('./res/sockets/io')
 
