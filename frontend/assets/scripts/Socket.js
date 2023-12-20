@@ -1,6 +1,6 @@
 import { io } from 'socket.io-client';
-// const socketUrl = "http://192.168.1.69/"
-const socketUrl = "http://infinite-wildwood-05156.herokuapp.com/"
+const socketUrl = "http://192.168.1.11/"
+// const socketUrl = "http://infinite-wildwood-05156.herokuapp.com/"
 
 let socket = false
 let currentCallbacks = []
